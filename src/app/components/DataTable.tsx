@@ -21,6 +21,7 @@ import { useEffect, useState } from "react";
 import { api } from "../utils/api";
 import { useRouter } from "next/navigation";
 import { CreateEmployeeModal } from "./CreateEmployeeModal";
+import CreateAccountModal from "@/components/CreateAccountModal";
 import { Spinner } from "./Spinner";
 import { toast } from "@/hooks/use-toast";
 
@@ -41,6 +42,7 @@ export type Employee = {
   dateOfBirth: string;
   birthPlace: string;
   maritalStatus: string;
+  userId?: string;
 };
 
 export type JobTitle = {
@@ -78,6 +80,12 @@ export function DataTable() {
   const [role, setRole] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [accountModalOpen, setAccountModalOpen] = useState(false);
+  const [selectedEmployeeForAccount, setSelectedEmployeeForAccount] = useState<{
+    id: string;
+    email: string;
+    name: string;
+  } | null>(null);
 
   const fetchEmployeesData = async (silent = false) => {
     try {
@@ -127,7 +135,17 @@ export function DataTable() {
     }
   };
 
-  const handleEmployeeCreated = () => {
+  const handleCreateAccount = (employee: Employee) => {
+    setSelectedEmployeeForAccount({
+      id: employee.employeeId,
+      email: employee.companyEmail,
+      name: `${employee.firstName} ${employee.lastName}`,
+    });
+    setAccountModalOpen(true);
+    setOpenMenuId(null);
+  };
+
+  const handleAccountCreated = () => {
     fetchEmployeesData();
   };
 
@@ -176,7 +194,7 @@ export function DataTable() {
   return (
     <div className="w-full">
       <div className="mt-3">
-        <CreateEmployeeModal employeeCreated={handleEmployeeCreated} />
+        <CreateEmployeeModal employeeCreated={handleAccountCreated} />
       </div>
       <div className="py-4">
         <table className="min-w-full divide-y divide-gray-200 border border-gray-300">
@@ -255,6 +273,15 @@ export function DataTable() {
                         <View className="mr-2 h-4 w-4" />
                         View History
                       </DropdownMenuItem>
+                      {role === "OWNER" && !employee.userId && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={() => handleCreateAccount(employee)}>
+                            <span className="mr-2">👤</span>
+                            Create Account
+                          </DropdownMenuItem>
+                        </>
+                      )}
                       {canDelete && (
                         <>
                           <DropdownMenuSeparator />
@@ -297,6 +324,20 @@ export function DataTable() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {selectedEmployeeForAccount && (
+        <CreateAccountModal
+          isOpen={accountModalOpen}
+          onClose={() => {
+            setAccountModalOpen(false);
+            setSelectedEmployeeForAccount(null);
+          }}
+          employeeId={selectedEmployeeForAccount.id}
+          employeeEmail={selectedEmployeeForAccount.email}
+          employeeName={selectedEmployeeForAccount.name}
+          onAccountCreated={handleAccountCreated}
+        />
+      )}
     </div>
   );
 }
