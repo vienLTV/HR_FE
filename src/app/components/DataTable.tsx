@@ -78,6 +78,7 @@ export function DataTable() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [role, setRole] = useState<string | null>(null);
+  const [currentEmployeeId, setCurrentEmployeeId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [accountModalOpen, setAccountModalOpen] = useState(false);
@@ -115,7 +116,11 @@ export function DataTable() {
   useEffect(() => {
     if (!mounted) return;
     const storedRole = typeof window !== "undefined" ? localStorage.getItem("role") : null;
+    const storedEmployeeId =
+      typeof window !== "undefined" ? localStorage.getItem("employeeId") : null;
+    console.log("Current employeeId from localStorage:", storedEmployeeId);
     setRole(storedRole);
+    setCurrentEmployeeId(storedEmployeeId);
     fetchEmployeesData();
   }, [mounted]);
 
@@ -227,83 +232,96 @@ export function DataTable() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {employees.map((employee) => (
-              <tr
-                key={employee.employeeId}
-                className="hover:bg-gray-200 transition-colors duration-200"
-              >
-                <td className="px-6 py-4 whitespace-nowrap">{employee.firstName}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{employee.lastName}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{employee.companyEmail}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{employee.jobTitle?.title}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{employee.team?.name}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{employee.department?.name}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span
-                    className={`p-2 inline-flex text-xs leading-5 ${
-                      employee.employeeStatus === "OFFICIAL"
-                        ? "label-primary"
-                        : employee.employeeStatus === "PROBATION"
-                        ? "label-warning"
-                        : "bg-gray-100 text-gray-800"
-                    }`}
-                  >
-                    {employee.employeeStatus}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <DropdownMenu
-                    key={employee.employeeId}
-                    modal={false}
-                    open={openMenuId === employee.employeeId}
-                    onOpenChange={(open) => setOpenMenuId(open ? employee.employeeId : null)}
-                  >
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => handleViewDetail(employee.employeeId)}>
-                        <View className="mr-2 h-4 w-4" />
-                        View Detail
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleViewHistory(employee.employeeId)}>
-                        <View className="mr-2 h-4 w-4" />
-                        View History
-                      </DropdownMenuItem>
-                      {role === "OWNER" && !employee.userId && (
-                        <>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={() => handleCreateAccount(employee)}>
-                            <span className="mr-2">👤</span>
-                            Create Account
-                          </DropdownMenuItem>
-                        </>
-                      )}
-                      {canDelete && (
-                        <>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={() =>
-                              setDeleteTarget({
-                                id: employee.employeeId,
-                                name: `${employee.firstName} ${employee.lastName}`,
-                              })
-                            }
-                            className="text-red-600 focus:text-red-600"
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
-                          </DropdownMenuItem>
-                        </>
-                      )}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </td>
-              </tr>
-            ))}
+            {employees.map((employee) => {
+              console.log(
+                `Employee: ${employee.firstName} ${employee.lastName}, userId: ${employee.userId}`
+              );
+              return (
+                <tr
+                  key={employee.employeeId}
+                  className="hover:bg-gray-200 transition-colors duration-200"
+                >
+                  <td className="px-6 py-4 whitespace-nowrap">{employee.firstName}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{employee.lastName}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{employee.companyEmail}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{employee.jobTitle?.title}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{employee.team?.name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{employee.department?.name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span
+                      className={`p-2 inline-flex text-xs leading-5 ${
+                        employee.employeeStatus === "OFFICIAL"
+                          ? "label-primary"
+                          : employee.employeeStatus === "PROBATION"
+                          ? "label-warning"
+                          : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {employee.employeeStatus}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <DropdownMenu
+                      key={employee.employeeId}
+                      modal={false}
+                      open={openMenuId === employee.employeeId}
+                      onOpenChange={(open) => setOpenMenuId(open ? employee.employeeId : null)}
+                    >
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Open menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleViewDetail(employee.employeeId)}>
+                          <View className="mr-2 h-4 w-4" />
+                          View Detail
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleViewHistory(employee.employeeId)}>
+                          <View className="mr-2 h-4 w-4" />
+                          View History
+                        </DropdownMenuItem>
+                        {role === "OWNER" &&
+                          !employee.userId &&
+                          employee.employeeId !== currentEmployeeId && (
+                            <>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  console.log("Employee ID:", employee.employeeId);
+                                  console.log("Current employee ID:", currentEmployeeId);
+                                  handleCreateAccount(employee);
+                                }}
+                              >
+                                <span className="mr-2">👤</span>
+                                Create Account
+                              </DropdownMenuItem>
+                            </>
+                          )}
+                        {canDelete && (
+                          <>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onClick={() =>
+                                setDeleteTarget({
+                                  id: employee.employeeId,
+                                  name: `${employee.firstName} ${employee.lastName}`,
+                                })
+                              }
+                              className="text-red-600 focus:text-red-600"
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Delete
+                            </DropdownMenuItem>
+                          </>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
