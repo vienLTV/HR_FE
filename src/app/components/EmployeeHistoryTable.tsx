@@ -167,44 +167,43 @@ export function EmployeeHistoryTable({ employeeId }: EmployeeHistoryTableProps) 
           <Table>
             <TableHeader>
               <TableRow className="bg-gray-50">
-                <TableHead className="w-[140px]">Timestamp</TableHead>
-                <TableHead className="w-[160px]">Performed By</TableHead>
-                <TableHead className="w-[150px]">Field</TableHead>
-                <TableHead>Old Value → New Value</TableHead>
-                <TableHead className="w-[100px]">Type</TableHead>
+                <TableHead className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Date
+                </TableHead>
+                <TableHead className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Changed By
+                </TableHead>
+                <TableHead className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Field
+                </TableHead>
+                <TableHead className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Old → New
+                </TableHead>
+                <TableHead className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Type
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {historyData.map((record, index) => (
-                <TableRow key={`${record.id}-${index}`}>
-                  <TableCell className="font-mono text-xs">
+                <TableRow key={`${record.id}-${index}`} className="hover:bg-gray-50">
+                  <TableCell className="px-4 py-2 text-sm text-gray-800">
                     {formatDate(record.changedAt)}
                   </TableCell>
-                  <TableCell className="text-sm">{record.changedBy || "System"}</TableCell>
-                  <TableCell>
-                    <span className="text-xs bg-gray-100 px-2 py-1 rounded">
-                      {formatFieldName(record.fieldName)}
-                    </span>
+                  <TableCell className="px-4 py-2 text-sm text-gray-800">
+                    {record.changedBy || "N/A"}
                   </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2 text-sm">
-                      <span className="text-gray-500">{formatValue(record.oldValue)}</span>
-                      <span>→</span>
-                      <span className="font-medium">{formatValue(record.newValue)}</span>
+                  <TableCell className="px-4 py-2 text-sm text-gray-800">
+                    {formatFieldName(record.fieldName)}
+                  </TableCell>
+                  <TableCell className="px-4 py-2 text-sm text-gray-800">
+                    <div className="flex flex-col">
+                      <span className="text-gray-500 line-through">{record.oldValue ?? "N/A"}</span>
+                      <span className="text-gray-900">{record.newValue ?? "N/A"}</span>
                     </div>
                   </TableCell>
-                  <TableCell>
-                    <span
-                      className={`px-2 py-1 rounded text-xs font-medium ${
-                        record.changeType === "CREATE"
-                          ? "bg-blue-100 text-blue-800"
-                          : record.changeType === "UPDATE"
-                          ? "bg-gray-100 text-gray-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {record.changeType}
-                    </span>
+                  <TableCell className="px-4 py-2 text-sm font-semibold text-gray-800">
+                    {record.changeType}
                   </TableCell>
                 </TableRow>
               ))}

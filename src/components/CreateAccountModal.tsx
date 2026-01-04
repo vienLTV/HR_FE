@@ -5,6 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -36,6 +43,7 @@ export default function CreateAccountModal({
   const [isLoading, setIsLoading] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState("USER");
   const [passwordError, setPasswordError] = useState("");
 
   const handleCreateAccount = async () => {
@@ -64,7 +72,7 @@ export default function CreateAccountModal({
         employeeId,
         accountEmail: employeeEmail,
         password,
-        role: "USER",
+        role: role,
       });
 
       if (!response.ok) {
@@ -80,6 +88,7 @@ export default function CreateAccountModal({
       // Reset form
       setPassword("");
       setConfirmPassword("");
+      setRole("USER");
       setPasswordError("");
 
       // Close modal and refresh
@@ -110,6 +119,21 @@ export default function CreateAccountModal({
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input id="email" type="email" value={employeeEmail} readOnly className="bg-gray-50" />
+          </div>
+
+          {/* Role Selection */}
+          <div className="space-y-2">
+            <Label htmlFor="role">Role</Label>
+            <Select value={role} onValueChange={setRole} disabled={isLoading}>
+              <SelectTrigger id="role">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="USER">User</SelectItem>
+                <SelectItem value="MANAGER">Manager</SelectItem>
+                <SelectItem value="ADMIN">Admin</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Password */}

@@ -87,6 +87,7 @@ export function DataTable() {
     email: string;
     name: string;
   } | null>(null);
+  const [ownerEmail, setOwnerEmail] = useState<string | null>(null);
 
   const fetchEmployeesData = async (silent = false) => {
     try {
@@ -109,6 +110,23 @@ export function DataTable() {
     }
   };
 
+  const fetchOrganizationData = async () => {
+    try {
+      const response = await api.get("/sign-up/current");
+      if (!response.ok) {
+        throw new Error();
+      }
+      const data = await response.json();
+      const organization = data.data;
+      console.log("Organization data:", organization);
+      const ownerEmailValue = organization.owner || null;
+      console.log("Owner email:", ownerEmailValue);
+      setOwnerEmail(ownerEmailValue);
+    } catch (error) {
+      console.error("Error fetching organization:", error);
+    }
+  };
+
   useEffect(() => {
     setMounted(true); // This ensures the component is mounted on the client
   }, []);
@@ -122,9 +140,8 @@ export function DataTable() {
     setRole(storedRole);
     setCurrentEmployeeId(storedEmployeeId);
     fetchEmployeesData();
+    fetchOrganizationData();
   }, [mounted]);
-
-  const canDelete = role === "ADMIN";
 
   const handleViewDetail = (employeeId: string) => {
     setOpenMenuId(null);
@@ -299,23 +316,28 @@ export function DataTable() {
                               </DropdownMenuItem>
                             </>
                           )}
-                        {canDelete && (
-                          <>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                              onClick={() =>
-                                setDeleteTarget({
-                                  id: employee.employeeId,
-                                  name: `${employee.firstName} ${employee.lastName}`,
-                                })
-                              }
-                              className="text-red-600 focus:text-red-600"
-                            >
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              Delete
-                            </DropdownMenuItem>
-                          </>
-                        )}
+                        {(role === "ADMIN" || role === "OWNER") &&
+                          !(
+                            ownerEmail &&
+                            (ownerEmail.toLowerCase() === employee.companyEmail?.toLowerCase() ||
+                              ownerEmail.toLowerCase() === employee.personalEmail?.toLowerCase())
+                          ) && (
+                            <>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                onClick={() =>
+                                  setDeleteTarget({
+                                    id: employee.employeeId,
+                                    name: `${employee.firstName} ${employee.lastName}`,
+                                  })
+                                }
+                                className="text-red-600 focus:text-red-600"
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Delete
+                              </DropdownMenuItem>
+                            </>
+                          )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </td>
