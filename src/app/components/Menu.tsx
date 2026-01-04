@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Spinner } from "./Spinner";
+import { useRole } from "@/hooks/useRole";
 import {
   BriefcaseIcon,
   BuildingIcon,
@@ -14,6 +15,14 @@ import {
   ClipboardCheck,
 } from "lucide-react";
 
+/**
+ * Menu items with role-based visibility
+ * Role hierarchy: OWNER >= ADMIN > MANAGER > USER
+ * 
+ * USER: Home, Personal, Attendance (basic employee view)
+ * MANAGER: + Employees (view only, no create/delete actions)
+ * ADMIN/OWNER: All items
+ */
 export const menuItems = [
   {
     title: "MENU",
@@ -22,43 +31,50 @@ export const menuItems = [
         icon: HomeIcon,
         label: "Home",
         href: "/home",
-        visible: ["admin", "teacher", "student", "parent"],
+        // All roles can see Home
+        allowedRoles: ["USER", "MANAGER", "ADMIN", "OWNER"],
       },
       {
         icon: UserIcon,
         label: "Personal",
         href: "/personal",
-        visible: ["admin", "teacher"],
-      },
-      {
-        icon: UsersIcon,
-        label: "Employees",
-        href: "/employee",
-        visible: ["admin", "teacher"],
+        // All roles can see Personal
+        allowedRoles: ["USER", "MANAGER", "ADMIN", "OWNER"],
       },
       {
         icon: ClipboardCheck,
         label: "Attendance",
         href: "/attendance",
-        visible: ["admin", "teacher"],
+        // All roles can see Attendance
+        allowedRoles: ["USER", "MANAGER", "ADMIN", "OWNER"],
+      },
+      {
+        icon: UsersIcon,
+        label: "Employees",
+        href: "/employee",
+        // MANAGER+ can see Employees (view only, actions hidden in DataTable)
+        allowedRoles: ["MANAGER", "ADMIN", "OWNER"],
       },
       {
         icon: BriefcaseIcon,
         label: "Job Title",
         href: "/job-title",
-        visible: ["admin", "teacher"],
+        // ADMIN+ can see Job Title
+        allowedRoles: ["ADMIN", "OWNER"],
       },
       {
         icon: UserPlus,
         label: "Team",
         href: "/team",
-        visible: ["admin"],
+        // ADMIN+ can see Team
+        allowedRoles: ["ADMIN", "OWNER"],
       },
       {
         icon: BuildingIcon,
         label: "Department",
         href: "/department",
-        visible: ["admin", "teacher"],
+        // ADMIN+ can see Department
+        allowedRoles: ["ADMIN", "OWNER"],
       },
     ],
   },
@@ -67,6 +83,7 @@ export const menuItems = [
 const Menu = () => {
   const pathname = usePathname();
   const router = useRouter();
+  const { role, isLoaded } = useRole();
   const [isLoading, setIsLoading] = useState(false);
   const [activeHref, setActiveHref] = useState(pathname);
 
@@ -83,11 +100,21 @@ const Menu = () => {
     }
   };
 
+  // Filter menu items based on user role
+  const getVisibleMenuItems = () => {
+    if (!isLoaded || !role) return [];
+
+    return menuItems.map((section) => ({
+      ...section,
+      items: section.items.filter((item) => item.allowedRoles.includes(role.toUpperCase())),
+    }));
+  };
+
   return (
     <>
       {isLoading && <Spinner />}
       <nav className="text-sm mt-2" aria-label="Main Navigation">
-        {menuItems.map((i) => (
+        {getVisibleMenuItems().map((i) => (
           <div className="flex flex-col gap-2" key={i.title}>
             {i.items.map((item) => {
               const isActive = pathname === item.href;

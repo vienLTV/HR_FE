@@ -24,6 +24,7 @@ import { CreateEmployeeModal } from "./CreateEmployeeModal";
 import CreateAccountModal from "@/components/CreateAccountModal";
 import { Spinner } from "./Spinner";
 import { toast } from "@/hooks/use-toast";
+import { useRole } from "@/hooks/useRole";
 
 export type Employee = {
   employeeId: string;
@@ -77,7 +78,7 @@ export function DataTable() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
-  const [role, setRole] = useState<string | null>(null);
+  const { role, isLoaded } = useRole();
   const [currentEmployeeId, setCurrentEmployeeId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
@@ -132,16 +133,14 @@ export function DataTable() {
   }, []);
 
   useEffect(() => {
-    if (!mounted) return;
-    const storedRole = typeof window !== "undefined" ? localStorage.getItem("role") : null;
+    if (!mounted || !isLoaded) return;
     const storedEmployeeId =
       typeof window !== "undefined" ? localStorage.getItem("employeeId") : null;
     console.log("Current employeeId from localStorage:", storedEmployeeId);
-    setRole(storedRole);
     setCurrentEmployeeId(storedEmployeeId);
     fetchEmployeesData();
     fetchOrganizationData();
-  }, [mounted]);
+  }, [mounted, isLoaded]);
 
   const handleViewDetail = (employeeId: string) => {
     setOpenMenuId(null);
@@ -216,7 +215,10 @@ export function DataTable() {
   return (
     <div className="w-full">
       <div className="mt-3">
-        <CreateEmployeeModal employeeCreated={handleAccountCreated} />
+        {/* Show Create button only for ADMIN and OWNER roles */}
+        {role && ["ADMIN", "OWNER"].includes(role.toUpperCase()) && (
+          <CreateEmployeeModal employeeCreated={handleAccountCreated} />
+        )}
       </div>
       <div className="py-4">
         <table className="min-w-full divide-y divide-gray-200 border border-gray-300">
@@ -299,7 +301,9 @@ export function DataTable() {
                           <View className="mr-2 h-4 w-4" />
                           View History
                         </DropdownMenuItem>
-                        {role === "OWNER" &&
+                        {/* Create Account: Only ADMIN/OWNER can create, and employee must not have account yet */}
+                        {role &&
+                          ["ADMIN", "OWNER"].includes(role.toUpperCase()) &&
                           !employee.userId &&
                           employee.employeeId !== currentEmployeeId && (
                             <>
@@ -316,7 +320,9 @@ export function DataTable() {
                               </DropdownMenuItem>
                             </>
                           )}
-                        {(role === "ADMIN" || role === "OWNER") &&
+                        {/* Delete: Only ADMIN/OWNER can delete, and cannot delete organization owner */}
+                        {role &&
+                          ["ADMIN", "OWNER"].includes(role.toUpperCase()) &&
                           !(
                             ownerEmail &&
                             (ownerEmail.toLowerCase() === employee.companyEmail?.toLowerCase() ||
