@@ -47,11 +47,11 @@ export function getRoleFromToken(): string | null {
     }
 
     console.log("getRoleFromToken: JWT claims:", claims);
-    
+
     // JWT might have role as string or array
     const role = claims.role || claims.roles?.[0] || claims.groups?.[0];
     console.log("getRoleFromToken: Extracted role:", role);
-    
+
     return role || null;
   } catch (error) {
     console.error("Error getting role from token:", error);

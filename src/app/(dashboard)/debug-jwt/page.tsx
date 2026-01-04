@@ -73,16 +73,12 @@ export default function DebugJWTPage() {
         <CardContent className="space-y-2">
           <div>
             <strong>From localStorage ("role"):</strong>
-            <span className="ml-2 px-2 py-1 bg-blue-100 rounded">
-              {roleFromStorage || "null"}
-            </span>
+            <span className="ml-2 px-2 py-1 bg-blue-100 rounded">{roleFromStorage || "null"}</span>
           </div>
 
           <div>
             <strong>From JWT (getRoleFromToken):</strong>
-            <span className="ml-2 px-2 py-1 bg-green-100 rounded">
-              {extractedRole || "null"}
-            </span>
+            <span className="ml-2 px-2 py-1 bg-green-100 rounded">{extractedRole || "null"}</span>
           </div>
 
           <div>

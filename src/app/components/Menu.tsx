@@ -103,7 +103,7 @@ const Menu = () => {
   // Filter menu items based on user role
   const getVisibleMenuItems = () => {
     console.log("Menu Debug - isLoaded:", isLoaded, "role:", role);
-    
+
     if (!isLoaded || !role) {
       console.log("Menu: Returning empty - not loaded or no role");
       return [];
@@ -113,11 +113,13 @@ const Menu = () => {
       ...section,
       items: section.items.filter((item) => {
         const hasAccess = item.allowedRoles.includes(role.toUpperCase());
-        console.log(`Menu item ${item.label}: role=${role}, allowed=${item.allowedRoles}, hasAccess=${hasAccess}`);
+        console.log(
+          `Menu item ${item.label}: role=${role}, allowed=${item.allowedRoles}, hasAccess=${hasAccess}`
+        );
         return hasAccess;
       }),
     }));
-    
+
     console.log("Menu: Filtered items:", filtered);
     return filtered;
   };
