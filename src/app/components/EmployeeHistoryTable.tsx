@@ -44,7 +44,7 @@ export function EmployeeHistoryTable({ employeeId }: EmployeeHistoryTableProps) 
       const normalizedBaseUrl = baseUrl.replace(/\/+$/, "");
       const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
-      const response = await fetch(`${normalizedBaseUrl}/employee-history/${employeeId}`, {
+      const response = await fetch(`${normalizedBaseUrl}/employee-history/employee/${employeeId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
