@@ -18,6 +18,7 @@ export function useRole(): {
   useEffect(() => {
     // Get role from JWT token stored in localStorage
     const userRole = getRoleFromToken();
+    console.log("useRole Hook - Role from JWT:", userRole);
     setRole(userRole);
     setIsLoaded(true);
   }, []);

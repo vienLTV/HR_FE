@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head><title>JWT Checker</title></head>
+<body>
+<h2>JWT Token Checker</h2>
+<button onclick="checkToken()">Check Current Token</button>
+<pre id="output"></pre>
+<script>
+function checkToken() {
+  const token = localStorage.getItem('token');
+  const role = localStorage.getItem('role');
+  const output = document.getElementById('output');
+  
+  if (!token) {
+    output.textContent = 'No token found in localStorage';
+    return;
+  }
+  
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      output.textContent = 'Invalid JWT format';
+      return;
+    }
+    
+    const payload = parts[1];
+    const paddedPayload = payload + '='.repeat((4 - (payload.length % 4)) % 4);
+    const decodedPayload = atob(paddedPayload);
+    const claims = JSON.parse(decodedPayload);
+    
+    output.textContent = 'Token found!\n\n' +
+      'Claims:\n' + JSON.stringify(claims, null, 2) + '\n\n' +
+      'Role from localStorage: ' + role + '\n' +
+      'Role from JWT: ' + (claims.role || claims.roles || 'Not found');
+  } catch (error) {
+    output.textContent = 'Error decoding: ' + error.message;
+  }
+}
+</script>
+</body>
+</html>

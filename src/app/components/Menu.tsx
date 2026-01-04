@@ -18,7 +18,7 @@ import {
 /**
  * Menu items with role-based visibility
  * Role hierarchy: OWNER >= ADMIN > MANAGER > USER
- * 
+ *
  * USER: Home, Personal, Attendance (basic employee view)
  * MANAGER: + Employees (view only, no create/delete actions)
  * ADMIN/OWNER: All items
@@ -102,12 +102,24 @@ const Menu = () => {
 
   // Filter menu items based on user role
   const getVisibleMenuItems = () => {
-    if (!isLoaded || !role) return [];
+    console.log("Menu Debug - isLoaded:", isLoaded, "role:", role);
+    
+    if (!isLoaded || !role) {
+      console.log("Menu: Returning empty - not loaded or no role");
+      return [];
+    }
 
-    return menuItems.map((section) => ({
+    const filtered = menuItems.map((section) => ({
       ...section,
-      items: section.items.filter((item) => item.allowedRoles.includes(role.toUpperCase())),
+      items: section.items.filter((item) => {
+        const hasAccess = item.allowedRoles.includes(role.toUpperCase());
+        console.log(`Menu item ${item.label}: role=${role}, allowed=${item.allowedRoles}, hasAccess=${hasAccess}`);
+        return hasAccess;
+      }),
     }));
+    
+    console.log("Menu: Filtered items:", filtered);
+    return filtered;
   };
 
   return (

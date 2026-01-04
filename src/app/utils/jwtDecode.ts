@@ -29,21 +29,29 @@ export function decodeJWT(token: string): Record<string, any> | null {
 export function getRoleFromToken(): string | null {
   try {
     if (typeof window === "undefined") {
+      console.log("getRoleFromToken: Not in browser (SSR)");
       return null;
     }
 
     const token = localStorage.getItem("token");
     if (!token) {
+      console.log("getRoleFromToken: No token in localStorage");
       return null;
     }
 
+    console.log("getRoleFromToken: Token found, decoding...");
     const claims = decodeJWT(token);
     if (!claims) {
+      console.log("getRoleFromToken: Failed to decode JWT");
       return null;
     }
 
+    console.log("getRoleFromToken: JWT claims:", claims);
+    
     // JWT might have role as string or array
-    const role = claims.role || claims.roles?.[0];
+    const role = claims.role || claims.roles?.[0] || claims.groups?.[0];
+    console.log("getRoleFromToken: Extracted role:", role);
+    
     return role || null;
   } catch (error) {
     console.error("Error getting role from token:", error);
