@@ -13,6 +13,7 @@ import {
   UserPlus,
   UsersIcon,
   ClipboardCheck,
+  Calendar,
 } from "lucide-react";
 
 /**
@@ -46,6 +47,13 @@ export const menuItems = [
         label: "Attendance",
         href: "/attendance",
         // All roles can see Attendance
+        allowedRoles: ["USER", "MANAGER", "ADMIN", "OWNER"],
+      },
+      {
+        icon: Calendar,
+        label: "Leave",
+        href: "/leave",
+        // All roles can see Leave
         allowedRoles: ["USER", "MANAGER", "ADMIN", "OWNER"],
       },
       {
