@@ -14,6 +14,9 @@ import {
   UsersIcon,
   ClipboardCheck,
   Calendar,
+  DollarSign,
+  Wallet,
+  Settings,
 } from "lucide-react";
 
 /**
@@ -55,6 +58,27 @@ export const menuItems = [
         href: "/leave",
         // All roles can see Leave
         allowedRoles: ["USER", "MANAGER", "ADMIN", "OWNER"],
+      },
+      {
+        icon: DollarSign,
+        label: "Salary",
+        href: "/salary",
+        // USER+ can see their own Salary
+        allowedRoles: ["USER", "MANAGER", "ADMIN", "OWNER"],
+      },
+      {
+        icon: Wallet,
+        label: "Team Salary",
+        href: "/team-salary",
+        // MANAGER+ can see Team Salary
+        allowedRoles: ["MANAGER", "ADMIN", "OWNER"],
+      },
+      {
+        icon: Settings,
+        label: "Salary Management",
+        href: "/salary-management",
+        // ADMIN+ can manage Salary
+        allowedRoles: ["ADMIN", "OWNER"],
       },
       {
         icon: UsersIcon,

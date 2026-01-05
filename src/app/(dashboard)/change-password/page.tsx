@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
+import { api } from "@/app/utils/api";
 
 export default function ChangePasswordPage() {
   const [formData, setFormData] = useState({
@@ -96,18 +97,19 @@ export default function ChangePasswordPage() {
     setIsLoading(true);
 
     try {
-      // TODO: Replace with actual API call when backend is ready
-      console.log("Change password request:", {
+      const response = await api.put("/auth/change-password", {
         currentPassword: formData.currentPassword,
         newPassword: formData.newPassword,
       });
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to change password");
+      }
 
       toast({
         title: "Success",
-        description: "Password changed successfully",
+        description: "Password changed successfully. Please login again.",
       });
 
       // Reset form
@@ -116,10 +118,16 @@ export default function ChangePasswordPage() {
         newPassword: "",
         confirmPassword: "",
       });
-    } catch (error) {
+
+      // Logout and redirect to login after 2 seconds
+      setTimeout(() => {
+        localStorage.removeItem("token");
+        router.push("/login");
+      }, 2000);
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to change password",
+        description: error.message || "Failed to change password",
         variant: "destructive",
       });
     } finally {
