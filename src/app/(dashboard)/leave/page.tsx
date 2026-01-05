@@ -62,6 +62,7 @@ export default function LeavePage() {
   const fetchLeaveRequests = async () => {
     try {
       setIsLoading(true);
+
       const endpoint =
         role && ["MANAGER", "ADMIN", "OWNER"].includes(role.toUpperCase())
           ? "/leave-requests" // All requests for managers
@@ -72,13 +73,18 @@ export default function LeavePage() {
         throw new Error("Failed to fetch leave requests");
       }
 
-      const data = await response.json();
-      setLeaveRequests(data.data || []);
+      const result = await response.json();
+      console.log("Backend response:", result);
+
+      // Backend returns {success, code, message, data}
+      const leaveData = result.data || [];
+      console.log("Leave data:", leaveData);
+      setLeaveRequests(Array.isArray(leaveData) ? leaveData : []);
     } catch (error) {
       console.error("Error fetching leave requests:", error);
       toast({
         title: "Error",
-        description: "Failed to load leave requests",
+        description: "Failed to fetch leave requests",
         variant: "destructive",
       });
     } finally {
@@ -113,6 +119,7 @@ export default function LeavePage() {
 
     try {
       setIsSubmitting(true);
+
       const requestBody: CreateLeaveRequest = {
         fromDate,
         toDate,
@@ -120,6 +127,7 @@ export default function LeavePage() {
       };
 
       const response = await api.post("/leave-requests", requestBody);
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to create leave request");
@@ -166,10 +174,10 @@ export default function LeavePage() {
 
       // Refresh list
       fetchLeaveRequests();
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to update leave request status",
+        description: error.message || "Failed to update status",
         variant: "destructive",
       });
     }
