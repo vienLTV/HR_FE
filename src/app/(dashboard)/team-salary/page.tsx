@@ -6,6 +6,7 @@ import { api } from "@/app/utils/api";
 import { toast } from "@/hooks/use-toast";
 import { Spinner } from "@/app/components/Spinner";
 import { Users, DollarSign, CheckCircle, Clock } from "lucide-react";
+import { useI18n } from "@/app/providers/LanguageProvider";
 import {
   Table,
   TableBody,
@@ -29,6 +30,7 @@ interface TeamSalaryRecord {
 }
 
 export default function TeamSalaryPage() {
+  const { t } = useI18n();
   const [salaryRecords, setSalaryRecords] = useState<TeamSalaryRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -67,12 +69,12 @@ export default function TeamSalaryPage() {
     return status === "PAID" ? (
       <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold inline-flex items-center gap-1">
         <CheckCircle className="w-3 h-3" />
-        Paid
+        {t("status.paid")}
       </span>
     ) : (
       <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold inline-flex items-center gap-1">
         <Clock className="w-3 h-3" />
-        Pending
+        {t("status.pending")}
       </span>
     );
   };
@@ -91,38 +93,40 @@ export default function TeamSalaryPage() {
       <div>
         <h1 className="text-3xl font-bold flex items-center gap-2">
           <Users className="w-8 h-8" />
-          Team Salary
+          {t("teamSalary.title")}
         </h1>
-        <p className="text-gray-600 mt-1">View your team members' salary (read-only)</p>
+        <p className="text-gray-600 mt-1">{t("teamSalary.subtitle")}</p>
       </div>
 
       {/* Team Salary Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Salary Records</CardTitle>
-          <CardDescription>View-only access to team salary information</CardDescription>
+          <CardTitle>{t("teamSalary.table.title")}</CardTitle>
+          <CardDescription>{t("teamSalary.table.desc")}</CardDescription>
         </CardHeader>
         <CardContent>
           {salaryRecords.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">No salary records found</div>
+            <div className="text-center py-8 text-gray-500">{t("teamSalary.table.empty")}</div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Employee</TableHead>
-                  <TableHead>Period</TableHead>
-                  <TableHead className="text-right">Basic Salary</TableHead>
-                  <TableHead className="text-right">Bonus</TableHead>
-                  <TableHead className="text-right">Deductions</TableHead>
-                  <TableHead className="text-right">Total</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>{t("salaryManagement.table.employee")}</TableHead>
+                  <TableHead>{t("salaryManagement.table.period")}</TableHead>
+                  <TableHead className="text-right">{t("salaryManagement.table.basic")}</TableHead>
+                  <TableHead className="text-right">{t("salaryManagement.table.bonus")}</TableHead>
+                  <TableHead className="text-right">
+                    {t("salaryManagement.table.deductions")}
+                  </TableHead>
+                  <TableHead className="text-right">{t("salaryManagement.table.total")}</TableHead>
+                  <TableHead>{t("salaryManagement.table.status")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {salaryRecords.map((record) => (
                   <TableRow key={record.salaryId}>
                     <TableCell className="font-medium">
-                      {record.employeeName || "Unknown"}
+                      {record.employeeName || t("status.unknown")}
                     </TableCell>
                     <TableCell>
                       {record.month}/{record.year}

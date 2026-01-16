@@ -2,31 +2,32 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Users, Target, Lightbulb, Award, ArrowRight } from "lucide-react";
+import { useI18n } from "@/app/providers/LanguageProvider";
 
 export default function AboutPage() {
+  const { t } = useI18n();
   const values = [
     {
-      title: "Innovation",
-      description:
-        "We continuously seek new ways to improve user experience and solve real problems.",
+      title: t("about.value.innovation"),
+      description: t("about.value.innovation.desc"),
       icon: Lightbulb,
       color: "from-yellow-500 to-yellow-600",
     },
     {
-      title: "Transparency",
-      description: "We believe in being honest and transparent with our customers.",
+      title: t("about.value.transparency"),
+      description: t("about.value.transparency.desc"),
       icon: Target,
       color: "from-blue-500 to-blue-600",
     },
     {
-      title: "Customer-centric",
-      description: "Our goal is to build solutions that solve your real problems.",
+      title: t("about.value.customerCentric"),
+      description: t("about.value.customerCentric.desc"),
       icon: Users,
       color: "from-green-500 to-green-600",
     },
     {
-      title: "Excellence",
-      description: "We strive to deliver the highest quality in everything we do.",
+      title: t("about.value.excellence"),
+      description: t("about.value.excellence.desc"),
       icon: Award,
       color: "from-purple-500 to-purple-600",
     },
@@ -34,24 +35,24 @@ export default function AboutPage() {
 
   const team = [
     {
-      name: "John Doe",
-      role: "CEO & Founder",
-      bio: "10+ years of experience in technology and human resources management.",
+      name: t("about.team.john"),
+      role: t("about.team.john.role"),
+      bio: t("about.team.john.bio"),
     },
     {
-      name: "Sarah Smith",
-      role: "CTO",
-      bio: "Expert in backend and cloud infrastructure with 8+ years of experience.",
+      name: t("about.team.sarah"),
+      role: t("about.team.sarah.role"),
+      bio: t("about.team.sarah.bio"),
     },
     {
-      name: "Mike Johnson",
-      role: "Head of Product",
-      bio: "Passionate about product design and user experience.",
+      name: t("about.team.mike"),
+      role: t("about.team.mike.role"),
+      bio: t("about.team.mike.bio"),
     },
     {
-      name: "Emily Chen",
-      role: "Head of Sales",
-      bio: "Building strong customer relationships and driving business growth.",
+      name: t("about.team.emily"),
+      role: t("about.team.emily.role"),
+      bio: t("about.team.emily.bio"),
     },
   ];
 
@@ -67,21 +68,21 @@ export default function AboutPage() {
           </div>
           <div className="hidden lg:flex lg:gap-x-12">
             <Link href="/features" className="text-sm font-semibold leading-6 text-gray-900">
-              Features
+              {t("nav.features")}
             </Link>
             <Link href="/pricing" className="text-sm font-semibold leading-6 text-gray-900">
-              Pricing
+              {t("nav.pricing")}
             </Link>
             <Link href="/about" className="text-sm font-semibold leading-6 text-blue-600">
-              About
+              {t("nav.about")}
             </Link>
             <Link href="/contact" className="text-sm font-semibold leading-6 text-gray-900">
-              Contact
+              {t("nav.contact")}
             </Link>
           </div>
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
             <Link href="/login" className="text-sm font-semibold leading-6 text-gray-900">
-              Log in
+              {t("nav.login")}
             </Link>
           </div>
         </nav>
@@ -92,12 +93,9 @@ export default function AboutPage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-              About Cetus
+              {t("about.title")}
             </h1>
-            <p className="mt-6 text-lg leading-8 text-gray-600">
-              Founded in 2023 with a simple vision: to make human resource management easy,
-              efficient, and accessible for every business.
-            </p>
+            <p className="mt-6 text-lg leading-8 text-gray-600">{t("about.subtitle")}</p>
           </div>
         </div>
       </div>
@@ -108,21 +106,15 @@ export default function AboutPage() {
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-100 to-blue-50 rounded-lg transform -skew-y-3"></div>
             <div className="relative bg-white p-8 rounded-lg border border-blue-200">
-              <h2 className="text-3xl font-bold text-gray-900">Mission</h2>
-              <p className="mt-4 text-lg text-gray-600">
-                To provide modern, easy-to-use, and efficient human resource management solutions
-                that help businesses manage their workforce smarter.
-              </p>
+              <h2 className="text-3xl font-bold text-gray-900">{t("about.mission.title")}</h2>
+              <p className="mt-4 text-lg text-gray-600">{t("about.mission.desc")}</p>
             </div>
           </div>
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-purple-100 to-purple-50 rounded-lg transform skew-y-3"></div>
             <div className="relative bg-white p-8 rounded-lg border border-purple-200">
-              <h2 className="text-3xl font-bold text-gray-900">Vision</h2>
-              <p className="mt-4 text-lg text-gray-600">
-                To become the most trusted human resource management platform in Southeast Asia,
-                helping millions of people work more efficiently.
-              </p>
+              <h2 className="text-3xl font-bold text-gray-900">{t("about.vision.title")}</h2>
+              <p className="mt-4 text-lg text-gray-600">{t("about.vision.desc")}</p>
             </div>
           </div>
         </div>
@@ -133,7 +125,7 @@ export default function AboutPage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center mb-16">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-              Our Core Values
+              {t("about.values.title")}
             </h2>
           </div>
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
@@ -161,10 +153,10 @@ export default function AboutPage() {
       {/* Team Section */}
       <div className="mx-auto max-w-7xl px-6 lg:px-8 py-24 sm:py-32">
         <div className="mx-auto max-w-2xl text-center mb-16">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Our Team</h2>
-          <p className="mt-6 text-lg leading-8 text-gray-600">
-            Built by talented individuals from leading companies.
-          </p>
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            {t("about.team.title")}
+          </h2>
+          <p className="mt-6 text-lg leading-8 text-gray-600">{t("about.team.subtitle")}</p>
         </div>
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {team.map((member, index) => (
@@ -192,9 +184,9 @@ export default function AboutPage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
             {[
-              { number: "500+", label: "Customers" },
-              { number: "100K+", label: "Users" },
-              { number: "99.9%", label: "Uptime" },
+              { number: "500+", label: t("about.stats.customers") },
+              { number: "100K+", label: t("about.stats.users") },
+              { number: "99.9%", label: t("about.stats.uptime") },
             ].map((stat, index) => (
               <div key={index} className="text-center">
                 <div className="text-4xl sm:text-5xl font-bold text-white">{stat.number}</div>
@@ -210,19 +202,17 @@ export default function AboutPage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-              Join Our Community
+              {t("about.cta.title")}
             </h2>
-            <p className="mt-6 text-lg leading-8 text-gray-600">
-              Be part of the human resources management revolution.
-            </p>
+            <p className="mt-6 text-lg leading-8 text-gray-600">{t("about.cta.subtitle")}</p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Link href="/register">
                 <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 text-lg">
-                  Get Started <ArrowRight className="ml-2 h-5 w-5" />
+                  {t("features.cta.button")} <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
               <Link href="/contact" className="text-sm font-semibold leading-6 text-gray-900">
-                Contact us <span aria-hidden="true">→</span>
+                {t("features.contactUs")} <span aria-hidden="true">→</span>
               </Link>
             </div>
           </div>

@@ -7,6 +7,7 @@ import { api } from "@/app/utils/api";
 import { toast } from "@/hooks/use-toast";
 import { Spinner } from "@/app/components/Spinner";
 import { Settings, DollarSign, CheckCircle, Clock, Calculator } from "lucide-react";
+import { useI18n } from "@/app/providers/LanguageProvider";
 import {
   Table,
   TableBody,
@@ -42,6 +43,7 @@ interface SalaryRecord {
 }
 
 export default function SalaryManagementPage() {
+  const { t } = useI18n();
   const [salaryRecords, setSalaryRecords] = useState<SalaryRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCalculateDialogOpen, setIsCalculateDialogOpen] = useState(false);
@@ -93,21 +95,14 @@ export default function SalaryManagementPage() {
       });
 
       if (response.ok) {
-        toast({
-          title: "Success",
-          description: "Salary calculated successfully",
-        });
+        toast({ title: "Success", description: "Salary calculated successfully" });
         setIsCalculateDialogOpen(false);
         fetchAllSalary();
       } else {
         throw new Error("Failed to calculate salary");
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to calculate salary",
-        variant: "destructive",
-      });
+      toast({ title: "Error", description: "Failed to calculate salary", variant: "destructive" });
     } finally {
       setIsCalculating(false);
     }
@@ -117,10 +112,7 @@ export default function SalaryManagementPage() {
     try {
       const response = await api.put(`/salary/${salaryId}/mark-paid`, {});
       if (response.ok) {
-        toast({
-          title: "Success",
-          description: "Salary marked as paid",
-        });
+        toast({ title: "Success", description: "Salary marked as paid" });
         fetchAllSalary();
       } else {
         throw new Error("Failed to mark as paid");
@@ -145,12 +137,12 @@ export default function SalaryManagementPage() {
     return status === "PAID" ? (
       <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold inline-flex items-center gap-1">
         <CheckCircle className="w-3 h-3" />
-        Paid
+        {t("status.paid")}
       </span>
     ) : (
       <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold inline-flex items-center gap-1">
         <Clock className="w-3 h-3" />
-        Pending
+        {t("status.pending")}
       </span>
     );
   };
@@ -170,28 +162,26 @@ export default function SalaryManagementPage() {
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
             <Settings className="w-8 h-8" />
-            Salary Management
+            {t("salaryManagement.title")}
           </h1>
-          <p className="text-gray-600 mt-1">Calculate salary and manage payments</p>
+          <p className="text-gray-600 mt-1">{t("salaryManagement.subtitle")}</p>
         </div>
 
         <Dialog open={isCalculateDialogOpen} onOpenChange={setIsCalculateDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <Calculator className="w-4 h-4 mr-2" />
-              Calculate Salary
+              {t("salaryManagement.calculate")}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Calculate Salary</DialogTitle>
-              <DialogDescription>
-                Calculate salary for all employees for a specific period
-              </DialogDescription>
+              <DialogTitle>{t("salaryManagement.calculate.title")}</DialogTitle>
+              <DialogDescription>{t("salaryManagement.calculate.desc")}</DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="month">Month *</Label>
+                <Label htmlFor="month">{t("salaryManagement.month")}</Label>
                 <Input
                   id="month"
                   type="number"
@@ -203,7 +193,7 @@ export default function SalaryManagementPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="year">Year *</Label>
+                <Label htmlFor="year">{t("salaryManagement.year")}</Label>
                 <Input
                   id="year"
                   type="number"
@@ -216,10 +206,10 @@ export default function SalaryManagementPage() {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsCalculateDialogOpen(false)}>
-                Cancel
+                {t("common.cancel")}
               </Button>
               <Button onClick={handleCalculateSalary} disabled={isCalculating}>
-                {isCalculating ? "Calculating..." : "Calculate"}
+                {isCalculating ? t("common.calculating") : t("common.calculate")}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -229,33 +219,35 @@ export default function SalaryManagementPage() {
       {/* Salary Records Table */}
       <Card>
         <CardHeader>
-          <CardTitle>All Salary Records</CardTitle>
-          <CardDescription>Manage employee salaries and payments</CardDescription>
+          <CardTitle>{t("salaryManagement.table.title")}</CardTitle>
+          <CardDescription>{t("salaryManagement.table.desc")}</CardDescription>
         </CardHeader>
         <CardContent>
           {salaryRecords.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
-              No salary records found. Click "Calculate Salary" to generate salary for employees.
+              {t("salaryManagement.table.empty")}
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Employee</TableHead>
-                  <TableHead>Period</TableHead>
-                  <TableHead className="text-right">Basic Salary</TableHead>
-                  <TableHead className="text-right">Bonus</TableHead>
-                  <TableHead className="text-right">Deductions</TableHead>
-                  <TableHead className="text-right">Total</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Action</TableHead>
+                  <TableHead>{t("salaryManagement.table.employee")}</TableHead>
+                  <TableHead>{t("salaryManagement.table.period")}</TableHead>
+                  <TableHead className="text-right">{t("salaryManagement.table.basic")}</TableHead>
+                  <TableHead className="text-right">{t("salaryManagement.table.bonus")}</TableHead>
+                  <TableHead className="text-right">
+                    {t("salaryManagement.table.deductions")}
+                  </TableHead>
+                  <TableHead className="text-right">{t("salaryManagement.table.total")}</TableHead>
+                  <TableHead>{t("salaryManagement.table.status")}</TableHead>
+                  <TableHead>{t("salaryManagement.table.action")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {salaryRecords.map((record) => (
                   <TableRow key={record.salaryId}>
                     <TableCell className="font-medium">
-                      {record.employeeName || "Unknown"}
+                      {record.employeeName || t("status.unknown")}
                     </TableCell>
                     <TableCell>
                       {record.month}/{record.year}
@@ -280,7 +272,7 @@ export default function SalaryManagementPage() {
                           variant="outline"
                           onClick={() => handleMarkAsPaid(record.salaryId)}
                         >
-                          Mark as Paid
+                          {t("salaryManagement.markPaid")}
                         </Button>
                       )}
                     </TableCell>

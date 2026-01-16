@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Spinner } from "./Spinner";
 import { useRole } from "@/hooks/useRole";
+import { useI18n } from "@/app/providers/LanguageProvider";
 import {
   BriefcaseIcon,
   BuildingIcon,
@@ -33,79 +34,68 @@ export const menuItems = [
     items: [
       {
         icon: HomeIcon,
-        label: "Home",
+        label: "menu.home",
         href: "/home",
-        // All roles can see Home
         allowedRoles: ["USER", "MANAGER", "ADMIN", "OWNER"],
       },
       {
         icon: UserIcon,
-        label: "Personal",
+        label: "menu.personal",
         href: "/personal",
-        // All roles can see Personal
         allowedRoles: ["USER", "MANAGER", "ADMIN", "OWNER"],
       },
       {
         icon: ClipboardCheck,
-        label: "Attendance",
+        label: "menu.attendance",
         href: "/attendance",
-        // All roles can see Attendance
         allowedRoles: ["USER", "MANAGER", "ADMIN", "OWNER"],
       },
       {
         icon: Calendar,
-        label: "Leave",
+        label: "menu.leave",
         href: "/leave",
-        // All roles can see Leave
         allowedRoles: ["USER", "MANAGER", "ADMIN", "OWNER"],
       },
       {
         icon: DollarSign,
-        label: "Salary",
+        label: "menu.salary",
         href: "/salary",
-        // USER+ can see their own Salary
         allowedRoles: ["USER", "MANAGER", "ADMIN", "OWNER"],
       },
       {
         icon: Wallet,
-        label: "Team Salary",
+        label: "menu.teamSalary",
         href: "/team-salary",
-        // MANAGER+ can see Team Salary
         allowedRoles: ["MANAGER", "ADMIN", "OWNER"],
       },
       {
         icon: Settings,
-        label: "Salary Management",
+        label: "menu.salaryManagement",
         href: "/salary-management",
-        // ADMIN+ can manage Salary
         allowedRoles: ["ADMIN", "OWNER"],
       },
       {
         icon: UsersIcon,
-        label: "Employees",
+        label: "menu.employees",
         href: "/employee",
-        // MANAGER+ can see Employees (view only, actions hidden in DataTable)
         allowedRoles: ["MANAGER", "ADMIN", "OWNER"],
       },
       {
         icon: BriefcaseIcon,
-        label: "Job Title",
+        label: "menu.jobTitle",
         href: "/job-title",
-        // ADMIN+ can see Job Title
         allowedRoles: ["ADMIN", "OWNER"],
       },
       {
         icon: UserPlus,
-        label: "Team",
+        label: "menu.team",
         href: "/team",
-        // ADMIN+ can see Team
         allowedRoles: ["ADMIN", "OWNER"],
       },
       {
         icon: BuildingIcon,
-        label: "Department",
+        label: "menu.department",
         href: "/department",
-        // ADMIN+ can see Department
         allowedRoles: ["ADMIN", "OWNER"],
       },
     ],
@@ -156,6 +146,7 @@ const Menu = () => {
     return filtered;
   };
 
+  const { t } = useI18n();
   return (
     <>
       {isLoading && <Spinner />}
@@ -186,7 +177,7 @@ const Menu = () => {
                       isActive ? "text-blue-600" : "text-white"
                     }`}
                   >
-                    {item.label}
+                    {t(item.label)}
                   </span>
                 </Link>
               );

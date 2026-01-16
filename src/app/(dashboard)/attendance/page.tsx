@@ -7,6 +7,7 @@ import { api } from "@/app/utils/api";
 import { toast } from "@/hooks/use-toast";
 import { Spinner } from "@/app/components/Spinner";
 import { Clock, CheckCircle, XCircle, Calendar } from "lucide-react";
+import { useI18n } from "@/app/providers/LanguageProvider";
 
 type AttendanceStatus = "PRESENT" | "PENDING" | "ABSENT" | "LATE" | "LEAVE";
 
@@ -22,6 +23,7 @@ interface AttendanceRecord {
 }
 
 export default function AttendancePage() {
+  const { t } = useI18n();
   const [isLoading, setIsLoading] = useState(true);
   const [isCheckingIn, setIsCheckingIn] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
@@ -41,8 +43,12 @@ export default function AttendancePage() {
 
         // Find the latest record for today
         const todayRecords = items.filter((record: AttendanceRecord) => {
-          const recordDate = record.attendanceDate.split("T")[0];
-          return recordDate === today;
+          try {
+            const recordDate = new Date(record.attendanceDate).toISOString().split("T")[0];
+            return recordDate === today;
+          } catch {
+            return false;
+          }
         });
 
         if (todayRecords.length > 0) {
@@ -87,21 +93,26 @@ export default function AttendancePage() {
   const handleCheckIn = async () => {
     setIsCheckingIn(true);
     try {
-      const now = new Date().toISOString();
-      const response = await api.post("/attendance/check-in", {
-        checkInTime: now,
-      });
+      const response = await api.post("/attendance/check-in", {});
 
       if (response.ok) {
+        const resJson = await response.json().catch(() => null);
+        const attendance = resJson?.data as AttendanceRecord | null;
+        if (attendance) {
+          setTodayAttendance(attendance);
+        } else {
+          // Fallback to fetching if payload missing
+          await fetchTodayAttendance();
+        }
         toast({
           title: "Success",
           description: "Checked in successfully",
         });
-        // Refetch today's attendance and history
-        await fetchTodayAttendance();
+        // Refresh history to reflect the latest changes
         await fetchAttendanceHistory(0);
       } else {
-        throw new Error("Failed to check in");
+        const errorData = await response.json().catch(() => ({ message: "Failed to check in" }));
+        throw new Error(errorData.message || errorData.detail || "Failed to check in");
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to check in";
@@ -118,21 +129,25 @@ export default function AttendancePage() {
   const handleCheckOut = async () => {
     setIsCheckingOut(true);
     try {
-      const now = new Date().toISOString();
-      const response = await api.post("/attendance/check-out", {
-        checkOutTime: now,
-      });
+      const response = await api.post("/attendance/check-out", {});
 
       if (response.ok) {
+        const resJson = await response.json().catch(() => null);
+        const attendance = resJson?.data as AttendanceRecord | null;
+        if (attendance) {
+          setTodayAttendance(attendance);
+        } else {
+          await fetchTodayAttendance();
+        }
         toast({
           title: "Success",
           description: "Checked out successfully",
         });
-        // Refetch today's attendance and history
-        await fetchTodayAttendance();
+        // Refresh history to reflect the latest changes
         await fetchAttendanceHistory(0);
       } else {
-        throw new Error("Failed to check out");
+        const errorData = await response.json().catch(() => ({ message: "Failed to check out" }));
+        throw new Error(errorData.message || errorData.detail || "Failed to check out");
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to check out";
@@ -170,10 +185,16 @@ export default function AttendancePage() {
       LATE: "bg-orange-100 text-orange-800",
       LEAVE: "bg-blue-100 text-blue-800",
     };
-
+    const statusKeyMap = {
+      PRESENT: t("attendance.status.present"),
+      PENDING: t("attendance.status.pending"),
+      ABSENT: t("attendance.status.absent"),
+      LATE: t("attendance.status.late"),
+      LEAVE: t("attendance.status.leave"),
+    };
     return (
       <span className={`px-2 py-1 rounded-full text-xs font-semibold ${styles[status]}`}>
-        {status}
+        {statusKeyMap[status] || status}
       </span>
     );
   };
@@ -185,8 +206,8 @@ export default function AttendancePage() {
     <div className="w-full p-4 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Attendance</h1>
-        <p className="text-gray-500">Track your daily attendance</p>
+        <h1 className="text-2xl font-bold text-gray-900">{t("attendance.title")}</h1>
+        <p className="text-gray-500">{t("attendance.subtitle")}</p>
       </div>
 
       {/* Today's Attendance Card */}
@@ -194,10 +215,10 @@ export default function AttendancePage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="h-5 w-5" />
-            Today's Attendance
+            {t("attendance.today")}
           </CardTitle>
           <CardDescription>
-            {new Date().toLocaleDateString("en-US", {
+            {new Date().toLocaleDateString("vi-VN", {
               weekday: "long",
               year: "numeric",
               month: "long",
@@ -209,25 +230,25 @@ export default function AttendancePage() {
           {/* Current Status */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-500 mb-1">Status</p>
+              <p className="text-sm text-gray-500 mb-1">{t("attendance.status")}</p>
               <div className="flex items-center gap-2">
                 {todayAttendance ? (
                   getStatusBadge(todayAttendance.status)
                 ) : (
-                  <span className="text-gray-400 text-sm">Not checked in</span>
+                  <span className="text-gray-400 text-sm">{t("attendance.notCheckedIn")}</span>
                 )}
               </div>
             </div>
 
             <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-500 mb-1">Check In</p>
+              <p className="text-sm text-gray-500 mb-1">{t("attendance.checkIn")}</p>
               <p className="text-lg font-semibold text-gray-900">
                 {formatTime(todayAttendance?.checkInTime || null)}
               </p>
             </div>
 
             <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-500 mb-1">Check Out</p>
+              <p className="text-sm text-gray-500 mb-1">{t("attendance.checkOut")}</p>
               <p className="text-lg font-semibold text-gray-900">
                 {formatTime(todayAttendance?.checkOutTime || null)}
               </p>
@@ -244,12 +265,12 @@ export default function AttendancePage() {
             >
               {isCheckingIn ? (
                 <>
-                  <Spinner /> Checking In...
+                  <Spinner /> {t("attendance.checkingIn")}
                 </>
               ) : (
                 <>
                   <CheckCircle className="mr-2 h-5 w-5" />
-                  Check In
+                  {t("attendance.checkIn")}
                 </>
               )}
             </Button>
@@ -263,12 +284,12 @@ export default function AttendancePage() {
             >
               {isCheckingOut ? (
                 <>
-                  <Spinner /> Checking Out...
+                  <Spinner /> {t("attendance.checkingOut")}
                 </>
               ) : (
                 <>
                   <XCircle className="mr-2 h-5 w-5" />
-                  Check Out
+                  {t("attendance.checkOut")}
                 </>
               )}
             </Button>
@@ -281,7 +302,7 @@ export default function AttendancePage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5" />
-            Attendance History
+            {t("attendance.history")}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -296,19 +317,19 @@ export default function AttendancePage() {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
-                        Date
+                        {t("attendance.date")}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
-                        Check In
+                        {t("attendance.checkInTime")}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
-                        Check Out
+                        {t("attendance.checkOutTime")}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
-                        Status
+                        {t("attendance.status")}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
-                        Notes
+                        {t("attendance.notes")}
                       </th>
                     </tr>
                   </thead>
@@ -316,7 +337,7 @@ export default function AttendancePage() {
                     {attendanceHistory.length === 0 ? (
                       <tr>
                         <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
-                          No attendance records found
+                          {t("attendance.noRecords")}
                         </td>
                       </tr>
                     ) : (
@@ -350,17 +371,17 @@ export default function AttendancePage() {
                     onClick={() => fetchAttendanceHistory(currentPage - 1)}
                     disabled={currentPage === 0}
                   >
-                    Previous
+                    {t("attendance.prev")}
                   </Button>
                   <span className="text-sm text-gray-600">
-                    Page {currentPage + 1} of {totalPages}
+                    {t("attendance.page")} {currentPage + 1} {t("attendance.of")} {totalPages}
                   </span>
                   <Button
                     variant="outline"
                     onClick={() => fetchAttendanceHistory(currentPage + 1)}
                     disabled={currentPage >= totalPages - 1}
                   >
-                    Next
+                    {t("attendance.next")}
                   </Button>
                 </div>
               )}

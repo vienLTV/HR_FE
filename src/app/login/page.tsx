@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Spinner } from "../components/Spinner";
+import { useI18n } from "@/app/providers/LanguageProvider";
 
 const LoginPage = () => {
+  const { t } = useI18n();
   const [accountEmail, setAccountEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [password, setPassword] = useState("");
@@ -93,12 +95,12 @@ const LoginPage = () => {
   return (
     <div className="flex justify-center mt-[200px]">
       <div className="flex flex-col w-[500px] p-10 gap-6 rounded-xl border border-gray-300 bg-white shadow-2xl">
-        <h1 className="font-bold text-2xl">Sign in to your account</h1>
+        <h1 className="font-bold text-2xl">{t("login.title")}</h1>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
             <label htmlFor="email" className="font-medium">
-              Email
+              {t("login.email")}
             </label>
             <input
               id="email"
@@ -113,7 +115,7 @@ const LoginPage = () => {
 
           <div className="flex flex-col gap-2">
             <label htmlFor="password" className="font-medium">
-              Password
+              {t("login.password")}
             </label>
             <div className="relative">
               <input
@@ -142,14 +144,14 @@ const LoginPage = () => {
             className="bg-black rounded-lg text-white p-3 mt-3"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Sign in..." : "Sign in"}
+            {isSubmitting ? t("login.signingIn") : t("login.signIn")}
           </button>
         </form>
 
         <p className="text-gray-500">
-          Do not have an account yet?
+          {t("login.noAccount")}
           <Link href="/register" className="m-1 font-medium text-black">
-            Sign up
+            {t("login.register")}
           </Link>
         </p>
       </div>

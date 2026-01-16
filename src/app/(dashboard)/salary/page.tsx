@@ -6,6 +6,7 @@ import { api } from "@/app/utils/api";
 import { toast } from "@/hooks/use-toast";
 import { Spinner } from "@/app/components/Spinner";
 import { DollarSign, Calendar, CheckCircle, Clock } from "lucide-react";
+import { useI18n } from "@/app/providers/LanguageProvider";
 
 interface SalaryRecord {
   salaryId: string;
@@ -22,6 +23,7 @@ interface SalaryRecord {
 }
 
 export default function MySalaryPage() {
+  const { t } = useI18n();
   const [salaryRecords, setSalaryRecords] = useState<SalaryRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -60,12 +62,12 @@ export default function MySalaryPage() {
     return status === "PAID" ? (
       <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold flex items-center gap-1">
         <CheckCircle className="w-3 h-3" />
-        Paid
+        {t("status.paid")}
       </span>
     ) : (
       <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold flex items-center gap-1">
         <Clock className="w-3 h-3" />
-        Pending
+        {t("status.pending")}
       </span>
     );
   };
@@ -84,16 +86,16 @@ export default function MySalaryPage() {
       <div>
         <h1 className="text-3xl font-bold flex items-center gap-2">
           <DollarSign className="w-8 h-8" />
-          My Salary
+          {t("salary.my.title")}
         </h1>
-        <p className="text-gray-600 mt-1">View your salary history</p>
+        <p className="text-gray-600 mt-1">{t("salary.my.subtitle")}</p>
       </div>
 
       {/* Salary Records */}
       {salaryRecords.length === 0 ? (
         <Card>
           <CardContent className="text-center py-8 text-gray-500">
-            No salary records found
+            {t("salary.my.empty")}
           </CardContent>
         </Card>
       ) : (
@@ -107,7 +109,7 @@ export default function MySalaryPage() {
                       <Calendar className="w-5 h-5" />
                       {record.month}/{record.year}
                     </CardTitle>
-                    <CardDescription>Salary breakdown</CardDescription>
+                    <CardDescription>{t("salary.breakdown")}</CardDescription>
                   </div>
                   {getStatusBadge(record.status)}
                 </div>
@@ -115,25 +117,25 @@ export default function MySalaryPage() {
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="p-4 bg-blue-50 rounded-lg">
-                    <p className="text-sm text-gray-600">Basic Salary</p>
+                    <p className="text-sm text-gray-600">{t("salary.basic")}</p>
                     <p className="text-lg font-semibold text-blue-600">
                       {formatCurrency(record.basicSalary)}
                     </p>
                   </div>
                   <div className="p-4 bg-green-50 rounded-lg">
-                    <p className="text-sm text-gray-600">Bonus</p>
+                    <p className="text-sm text-gray-600">{t("salary.bonus")}</p>
                     <p className="text-lg font-semibold text-green-600">
                       +{formatCurrency(record.bonus)}
                     </p>
                   </div>
                   <div className="p-4 bg-red-50 rounded-lg">
-                    <p className="text-sm text-gray-600">Deductions</p>
+                    <p className="text-sm text-gray-600">{t("salary.deductions")}</p>
                     <p className="text-lg font-semibold text-red-600">
                       -{formatCurrency(record.deductions)}
                     </p>
                   </div>
                   <div className="p-4 bg-purple-50 rounded-lg">
-                    <p className="text-sm text-gray-600">Total Salary</p>
+                    <p className="text-sm text-gray-600">{t("salary.total")}</p>
                     <p className="text-xl font-bold text-purple-600">
                       {formatCurrency(record.totalSalary)}
                     </p>
@@ -141,7 +143,7 @@ export default function MySalaryPage() {
                 </div>
                 {record.paidAt && (
                   <p className="text-sm text-gray-500 mt-4">
-                    Paid at: {new Date(record.paidAt).toLocaleString()}
+                    {t("salary.paidAt")}: {new Date(record.paidAt).toLocaleString()}
                   </p>
                 )}
               </CardContent>

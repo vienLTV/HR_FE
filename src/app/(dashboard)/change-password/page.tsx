@@ -8,8 +8,10 @@ import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
 import { api } from "@/app/utils/api";
+import { useI18n } from "@/app/providers/LanguageProvider";
 
 export default function ChangePasswordPage() {
+  const { t } = useI18n();
   const [formData, setFormData] = useState({
     currentPassword: "",
     newPassword: "",
@@ -42,7 +44,7 @@ export default function ChangePasswordPage() {
     if (!formData.currentPassword) {
       toast({
         title: "Error",
-        description: "Current password is required",
+        description: t("changePassword.error.currentRequired"),
         variant: "destructive",
       });
       return false;
@@ -51,7 +53,7 @@ export default function ChangePasswordPage() {
     if (!formData.newPassword) {
       toast({
         title: "Error",
-        description: "New password is required",
+        description: t("changePassword.error.newRequired"),
         variant: "destructive",
       });
       return false;
@@ -60,7 +62,7 @@ export default function ChangePasswordPage() {
     if (formData.newPassword.length < 6) {
       toast({
         title: "Error",
-        description: "New password must be at least 6 characters",
+        description: t("changePassword.error.minLength"),
         variant: "destructive",
       });
       return false;
@@ -69,7 +71,7 @@ export default function ChangePasswordPage() {
     if (formData.newPassword !== formData.confirmPassword) {
       toast({
         title: "Error",
-        description: "New password and confirm password do not match",
+        description: t("changePassword.error.mismatch"),
         variant: "destructive",
       });
       return false;
@@ -78,7 +80,7 @@ export default function ChangePasswordPage() {
     if (formData.currentPassword === formData.newPassword) {
       toast({
         title: "Error",
-        description: "New password cannot be the same as current password",
+        description: t("changePassword.error.same"),
         variant: "destructive",
       });
       return false;
@@ -109,7 +111,7 @@ export default function ChangePasswordPage() {
 
       toast({
         title: "Success",
-        description: "Password changed successfully. Please login again.",
+        description: t("changePassword.success") + " Please login again.",
       });
 
       // Reset form
@@ -127,7 +129,7 @@ export default function ChangePasswordPage() {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message || "Failed to change password",
+        description: error.message || t("changePassword.error.failed"),
         variant: "destructive",
       });
     } finally {
@@ -141,21 +143,21 @@ export default function ChangePasswordPage() {
         <Button variant="ghost" size="icon" onClick={() => router.back()} className="rounded-full">
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <h1 className="text-3xl font-bold text-gray-900">Change Password</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t("changePassword.title")}</h1>
       </div>
 
       <div className="max-w-md">
         <Card>
           <CardHeader>
-            <CardTitle>Update Your Password</CardTitle>
-            <CardDescription>Enter your current and new password</CardDescription>
+            <CardTitle>{t("changePassword.title")}</CardTitle>
+            <CardDescription>{t("changePassword.subtitle")}</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Current Password */}
               <div className="space-y-2">
                 <label htmlFor="currentPassword" className="text-sm font-medium text-gray-700">
-                  Current Password
+                  {t("changePassword.currentPassword")}
                 </label>
                 <div className="relative">
                   <Input
@@ -185,7 +187,7 @@ export default function ChangePasswordPage() {
               {/* New Password */}
               <div className="space-y-2">
                 <label htmlFor="newPassword" className="text-sm font-medium text-gray-700">
-                  New Password
+                  {t("changePassword.newPassword")}
                 </label>
                 <div className="relative">
                   <Input
@@ -216,7 +218,7 @@ export default function ChangePasswordPage() {
               {/* Confirm Password */}
               <div className="space-y-2">
                 <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
-                  Confirm New Password
+                  {t("changePassword.confirmPassword")}
                 </label>
                 <div className="relative">
                   <Input
@@ -245,7 +247,7 @@ export default function ChangePasswordPage() {
 
               {/* Submit Button */}
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Updating..." : "Update Password"}
+                {isLoading ? t("changePassword.submitting") : t("changePassword.submit")}
               </Button>
             </form>
           </CardContent>

@@ -33,6 +33,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { api } from "../utils/api";
 import { JobTitle, Team } from "./DataTable";
+import { useI18n } from "@/app/providers/LanguageProvider";
 
 const formSchema = z.object({
   firstName: z.string().min(2, {
@@ -64,6 +65,7 @@ interface CreateEmployeeModalProps {
 }
 
 export function CreateEmployeeModal({ employeeCreated }: CreateEmployeeModalProps) {
+  const { t } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [jobTitles, setJobTitles] = useState<JobTitle[]>([]);
@@ -178,7 +180,9 @@ export function CreateEmployeeModal({ employeeCreated }: CreateEmployeeModalProp
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="button-primary bg-white hover:bg-white">Create Employee</Button>
+        <Button className="button-primary bg-white hover:bg-white">
+          {t("employee.create.button")}
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
@@ -439,7 +443,7 @@ export function CreateEmployeeModal({ employeeCreated }: CreateEmployeeModalProp
               type="submit"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Creating..." : "Create Employee"}
+              {isSubmitting ? t("common.creating") : t("employee.create.button")}
             </Button>
           </form>
         </Form>

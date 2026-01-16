@@ -2,61 +2,63 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Check, ArrowRight } from "lucide-react";
+import { useI18n } from "@/app/providers/LanguageProvider";
 
 export default function PricingPage() {
+  const { t } = useI18n();
   const plans = [
     {
-      name: "Startup",
+      name: t("pricing.plan.startup"),
       price: "99",
-      description: "Perfect for small teams just getting started",
+      description: t("pricing.startup.desc"),
       features: [
-        "Up to 50 employees",
-        "Basic employee profiles",
-        "Simple time tracking",
-        "Basic reporting",
-        "Email support",
-        "5GB storage",
-        "Mobile app access",
+        t("pricing.feature.employees50"),
+        t("pricing.feature.basicProfiles"),
+        t("pricing.feature.simpleTracking"),
+        t("pricing.feature.basicReporting"),
+        t("pricing.feature.emailSupport"),
+        t("pricing.feature.storage5gb"),
+        t("pricing.feature.mobileApp"),
       ],
-      cta: "Get Started",
+      cta: t("pricing.getStarted"),
       highlighted: false,
     },
     {
-      name: "Professional",
+      name: t("pricing.plan.professional"),
       price: "299",
-      description: "Best for growing businesses",
+      description: t("pricing.professional.desc"),
       features: [
-        "Up to 500 employees",
-        "Advanced employee profiles",
-        "Advanced time tracking",
-        "Custom reports",
-        "Priority email & chat support",
-        "100GB storage",
-        "Mobile app access",
-        "API access",
-        "Advanced analytics",
-        "Custom workflows",
+        t("pricing.feature.employees500"),
+        t("pricing.feature.advancedProfiles"),
+        t("pricing.feature.advancedTracking"),
+        t("pricing.feature.customReports"),
+        t("pricing.feature.emailChatSupport"),
+        t("pricing.feature.storage100gb"),
+        t("pricing.feature.mobileApp"),
+        t("pricing.feature.apiAccess"),
+        t("pricing.feature.analytics"),
+        t("pricing.feature.workflows"),
       ],
-      cta: "Get Started",
+      cta: t("pricing.getStarted"),
       highlighted: true,
     },
     {
-      name: "Enterprise",
+      name: t("pricing.plan.enterprise"),
       price: "Custom",
-      description: "For large-scale operations",
+      description: t("pricing.enterprise.desc"),
       features: [
-        "Unlimited employees",
-        "Full customization",
-        "Advanced integrations",
-        "Dedicated account manager",
-        "24/7 phone & email support",
-        "Unlimited storage",
-        "Single sign-on (SSO)",
-        "Custom development",
-        "Advanced security",
-        "Compliance tools",
+        t("pricing.feature.employeesUnlimited"),
+        t("pricing.feature.fullCustomization"),
+        t("pricing.feature.integrations"),
+        t("pricing.feature.accountManager"),
+        t("pricing.feature.phoneEmailSupport"),
+        t("pricing.feature.storageUnlimited"),
+        t("pricing.feature.sso"),
+        t("pricing.feature.development"),
+        t("pricing.feature.security"),
+        t("pricing.feature.compliance"),
       ],
-      cta: "Contact Sales",
+      cta: t("pricing.contactSales"),
       highlighted: false,
     },
   ];
@@ -73,21 +75,21 @@ export default function PricingPage() {
           </div>
           <div className="hidden lg:flex lg:gap-x-12">
             <Link href="/features" className="text-sm font-semibold leading-6 text-gray-900">
-              Features
+              {t("nav.features")}
             </Link>
             <Link href="/pricing" className="text-sm font-semibold leading-6 text-blue-600">
-              Pricing
+              {t("nav.pricing")}
             </Link>
             <Link href="/about" className="text-sm font-semibold leading-6 text-gray-900">
-              About
+              {t("nav.about")}
             </Link>
             <Link href="/contact" className="text-sm font-semibold leading-6 text-gray-900">
-              Contact
+              {t("nav.contact")}
             </Link>
           </div>
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
             <Link href="/login" className="text-sm font-semibold leading-6 text-gray-900">
-              Log in
+              {t("nav.login")}
             </Link>
           </div>
         </nav>
@@ -98,11 +100,9 @@ export default function PricingPage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-              Simple and Transparent Pricing
+              {t("pricing.title")}
             </h1>
-            <p className="mt-6 text-lg leading-8 text-gray-600">
-              Choose the plan that fits your business needs. No hidden fees.
-            </p>
+            <p className="mt-6 text-lg leading-8 text-gray-600">{t("pricing.subtitle")}</p>
           </div>
         </div>
       </div>
@@ -122,7 +122,7 @@ export default function PricingPage() {
               {plan.highlighted && (
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
                   <span className="inline-block bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-1 text-sm font-semibold rounded-full">
-                    Recommended
+                    {t("pricing.plan.recommended")}
                   </span>
                 </div>
               )}
@@ -133,9 +133,11 @@ export default function PricingPage() {
                 {/* Price */}
                 <div className="mt-6 mb-8">
                   <span className="text-5xl font-bold text-gray-900">${plan.price}</span>
-                  {plan.price !== "Custom" && <span className="text-gray-600 ml-2">/month</span>}
+                  {plan.price !== "Custom" && (
+                    <span className="text-gray-600 ml-2">{t("pricing.month")}</span>
+                  )}
                   {plan.price === "Custom" && (
-                    <span className="text-gray-600 ml-2">Contact for best pricing</span>
+                    <span className="text-gray-600 ml-2">{t("pricing.custom")}</span>
                   )}
                 </div>
 
@@ -175,29 +177,26 @@ export default function PricingPage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-              Frequently Asked Questions
+              {t("pricing.faq.title")}
             </h2>
           </div>
           <div className="mx-auto mt-12 max-w-4xl space-y-4">
             {[
               {
-                question: "Can I change my plan at any time?",
-                answer:
-                  "Yes, you can upgrade or downgrade your plan at any time. Changes will take effect immediately.",
+                question: t("pricing.faq.q1"),
+                answer: t("pricing.faq.a1"),
               },
               {
-                question: "Are there discounts for long-term contracts?",
-                answer:
-                  "Yes, we offer special pricing for 6-month, 1-year, 2-year, and longer contracts.",
+                question: t("pricing.faq.q2"),
+                answer: t("pricing.faq.a2"),
               },
               {
-                question: "Do you offer a free trial?",
-                answer: "Yes, you can try for free for 14 days with all features included.",
+                question: t("pricing.faq.q3"),
+                answer: t("pricing.faq.a3"),
               },
               {
-                question: "How is customer support available?",
-                answer:
-                  "We provide email support for Startup and Professional plans, and 24/7 support for Enterprise plans.",
+                question: t("pricing.faq.q4"),
+                answer: t("pricing.faq.a4"),
               },
             ].map((faq, index) => (
               <details
@@ -229,15 +228,13 @@ export default function PricingPage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-              Start Today
+              {t("pricing.cta.title")}
             </h2>
-            <p className="mt-6 text-lg leading-8 text-gray-600">
-              No credit card required. Try for free for 14 days.
-            </p>
+            <p className="mt-6 text-lg leading-8 text-gray-600">{t("pricing.cta.subtitle")}</p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Link href="/register">
                 <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 text-lg">
-                  Get Started <ArrowRight className="ml-2 h-5 w-5" />
+                  {t("features.cta.button")} <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
             </div>

@@ -25,6 +25,7 @@ import CreateAccountModal from "@/components/CreateAccountModal";
 import { Spinner } from "./Spinner";
 import { toast } from "@/hooks/use-toast";
 import { useRole } from "@/hooks/useRole";
+import { useI18n } from "@/app/providers/LanguageProvider";
 
 export type Employee = {
   employeeId: string;
@@ -73,6 +74,7 @@ export type Department = {
 };
 
 export function DataTable() {
+  const { t } = useI18n();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -188,7 +190,7 @@ export function DataTable() {
       }
 
       toast({
-        title: "Employee deleted successfully",
+        title: t("employee.delete.success"),
         description: `${deleteTarget.name} has been removed.`,
       });
       setDeleteTarget(null);
@@ -225,28 +227,28 @@ export function DataTable() {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                First name
+                {t("employee.table.firstName")}
               </th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                Last name
+                {t("employee.table.lastName")}
               </th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                Email
+                {t("employee.table.email")}
               </th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                Title
+                {t("employee.table.title")}
               </th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                Team
+                {t("employee.table.team")}
               </th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                Department
+                {t("employee.table.department")}
               </th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                Status
+                {t("employee.table.status")}
               </th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                Action
+                {t("employee.table.action")}
               </th>
             </tr>
           </thead>
@@ -276,7 +278,11 @@ export function DataTable() {
                           : "bg-gray-100 text-gray-800"
                       }`}
                     >
-                      {employee.employeeStatus}
+                      {employee.employeeStatus === "OFFICIAL"
+                        ? t("employee.status.official")
+                        : employee.employeeStatus === "PROBATION"
+                        ? t("employee.status.probation")
+                        : employee.employeeStatus}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

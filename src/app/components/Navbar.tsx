@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useI18n } from "@/app/providers/LanguageProvider";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import LanguageSwitcher from "./LanguageSwitcher";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,6 +44,7 @@ export default function Navbar() {
     router.push("/login");
   };
 
+  const { t } = useI18n();
   return (
     <div className="flex items-center justify-between p-4 border-b-2">
       {/* SEARCH */}
@@ -49,13 +52,13 @@ export default function Navbar() {
         <Image src="/search.png" alt="" width={14} height={14} />
         <input
           type="text"
-          placeholder="Search..."
+          placeholder={t("navbar.search.placeholder")}
           className="w-[200px] p-1 bg-transparent outline-none"
         />
       </div>
 
       {/* ICON AND USER */}
-      <div className="flex items-center gap-6 justify-end w-full">
+      <div className="flex items-center gap-4 justify-end w-full">
         <div className="bg-white rounded-full w-7 h-7 flex items-center justify-center cursor-pointer">
           <Image src="/message.png" alt="" width={20} height={20} />
         </div>
@@ -65,6 +68,10 @@ export default function Navbar() {
             1
           </div>
         </div>
+
+        {/* Language Switcher */}
+        <LanguageSwitcher />
+
         <div className="flex flex-col">
           <span className="text-xs leading-3 text-[#054FA5] font-bold">{fullName}</span>
           <span className="text-[10px] text-gray-600 text-right">{userInfo.role}</span>
@@ -85,14 +92,14 @@ export default function Navbar() {
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuItem onClick={() => router.push("/profile")} className="cursor-pointer">
               <User className="mr-2 h-4 w-4" />
-              <span>Profile</span>
+              <span>{t("navbar.profile")}</span>
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => router.push("/change-password")}
               className="cursor-pointer"
             >
               <Lock className="mr-2 h-4 w-4" />
-              <span>Change Password</span>
+              <span>{t("navbar.changePassword")}</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
@@ -100,7 +107,7 @@ export default function Navbar() {
               className="cursor-pointer text-red-600 focus:text-red-600"
             >
               <LogOut className="mr-2 h-4 w-4" />
-              <span>Sign out</span>
+              <span>{t("navbar.signOut")}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

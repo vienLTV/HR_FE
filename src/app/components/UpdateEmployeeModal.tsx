@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { useI18n } from "@/app/providers/LanguageProvider";
 
 import {
   Dialog,
@@ -66,6 +67,7 @@ interface UpdateEmployeeModalProps {
 }
 
 export function UpdateEmployeeModal({ employeeId, employeeUpdated }: UpdateEmployeeModalProps) {
+  const { t } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [jobTitles, setJobTitles] = useState<JobTitle[]>([]);
@@ -139,8 +141,8 @@ export function UpdateEmployeeModal({ employeeId, employeeUpdated }: UpdateEmplo
       if (data.success) {
         setIsOpen(false);
         toast({
-          title: "Employee Updated",
-          description: "The employee has been successfully updated to the system.",
+          title: t("personal.update.success.title"),
+          description: t("personal.update.success.description"),
         });
         form.reset();
         employeeUpdated();
@@ -148,8 +150,8 @@ export function UpdateEmployeeModal({ employeeId, employeeUpdated }: UpdateEmplo
     } catch (error) {
       console.error("Error updating employee:", error);
       toast({
-        title: "Error",
-        description: "Failed to update employee. Please try again.",
+        title: t("personal.update.error.title"),
+        description: t("personal.update.error.description"),
         variant: "destructive",
       });
     } finally {
@@ -160,14 +162,12 @@ export function UpdateEmployeeModal({ employeeId, employeeUpdated }: UpdateEmplo
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="button-primary">Update</Button>
+        <Button className="button-primary">{t("personal.update.button")}</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle className="text-primary-md">Update Employee</DialogTitle>
-          <DialogDescription>
-            Fill in the details to update employee to the system.
-          </DialogDescription>
+          <DialogTitle className="text-primary-md">{t("personal.update.title")}</DialogTitle>
+          <DialogDescription>{t("personal.update.description")}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -417,7 +417,7 @@ export function UpdateEmployeeModal({ employeeId, employeeUpdated }: UpdateEmplo
               />
             </div>
             <button type="submit" disabled={isSubmitting} className="button-primary">
-              {isSubmitting ? "Updating..." : "Update Employee"}
+              {isSubmitting ? t("personal.update.updating") : t("personal.update.updateEmployee")}
             </button>
           </form>
         </Form>

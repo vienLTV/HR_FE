@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 import {
   Area,
   AreaChart,
@@ -15,21 +15,12 @@ import {
   XAxis,
   YAxis,
   ResponsiveContainer,
-} from "recharts"
+} from "recharts";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart"
-import { api } from "@/app/utils/api"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { api } from "@/app/utils/api";
+import { useI18n } from "@/app/providers/LanguageProvider";
 
 interface AttendanceDashboardSummary {
   totalEmployees: number;
@@ -37,6 +28,7 @@ interface AttendanceDashboardSummary {
 }
 
 export function HomeChart() {
+  const { t } = useI18n();
   const [attendanceData, setAttendanceData] = useState<AttendanceDashboardSummary | null>(null);
   const [isLoadingAttendance, setIsLoadingAttendance] = useState(true);
   const [attendanceError, setAttendanceError] = useState<string | null>(null);
@@ -67,8 +59,8 @@ export function HomeChart() {
     <div className="grid gap-6 p-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
       <Card className="w-full border border-gray-400">
         <CardHeader>
-          <CardTitle className="text-primary-md">Employee Headcount</CardTitle>
-          <CardDescription>Total employees over the past 6 months</CardDescription>
+          <CardTitle className="text-primary-md">{t("home.charts.headcount.title")}</CardTitle>
+          <CardDescription>{t("home.charts.headcount.desc")}</CardDescription>
         </CardHeader>
         <CardContent>
           <ChartContainer
@@ -104,8 +96,8 @@ export function HomeChart() {
 
       <Card className="w-full border border-gray-400">
         <CardHeader>
-          <CardTitle className="text-primary-md">Department Distribution</CardTitle>
-          <CardDescription>Employee distribution across departments</CardDescription>
+          <CardTitle className="text-primary-md">{t("home.charts.department.title")}</CardTitle>
+          <CardDescription>{t("home.charts.department.desc")}</CardDescription>
         </CardHeader>
         <CardContent>
           <ChartContainer
@@ -139,8 +131,8 @@ export function HomeChart() {
 
       <Card className="w-full border border-gray-400">
         <CardHeader>
-          <CardTitle className="text-primary-md">Employee Turnover Rate</CardTitle>
-          <CardDescription>Monthly turnover rate for the past 6 months</CardDescription>
+          <CardTitle className="text-primary-md">{t("home.charts.turnover.title")}</CardTitle>
+          <CardDescription>{t("home.charts.turnover.desc")}</CardDescription>
         </CardHeader>
         <CardContent>
           <ChartContainer
@@ -166,7 +158,12 @@ export function HomeChart() {
                 <XAxis dataKey="month" />
                 <YAxis />
                 <CartesianGrid strokeDasharray="3 3" />
-                <Area type="monotone" dataKey="turnover" stroke="var(--color-turnover)" fill="var(--color-turnover)" />
+                <Area
+                  type="monotone"
+                  dataKey="turnover"
+                  stroke="var(--color-turnover)"
+                  fill="var(--color-turnover)"
+                />
                 <ChartTooltip content={<ChartTooltipContent />} />
               </AreaChart>
             </ResponsiveContainer>
@@ -176,17 +173,17 @@ export function HomeChart() {
 
       <Card className="w-full border border-gray-400">
         <CardHeader>
-          <CardTitle className="text-primary-md">Attendance Today</CardTitle>
-          <CardDescription>Employees who checked in today</CardDescription>
+          <CardTitle className="text-primary-md">{t("home.charts.attendance.title")}</CardTitle>
+          <CardDescription>{t("home.charts.attendance.desc")}</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoadingAttendance ? (
             <div className="w-full h-[300px] flex items-center justify-center">
-              <p className="text-gray-500">Loading attendance data...</p>
+              <p className="text-gray-500">{t("home.charts.attendance.loading")}</p>
             </div>
           ) : attendanceError ? (
             <div className="w-full h-[300px] flex items-center justify-center">
-              <p className="text-red-500">{attendanceError}</p>
+              <p className="text-red-500">{t("home.charts.attendance.error")}</p>
             </div>
           ) : attendanceData ? (
             <div className="w-full h-[300px] flex items-center justify-center">
@@ -195,13 +192,13 @@ export function HomeChart() {
                   {attendanceData.totalAttendanceToday} / {attendanceData.totalEmployees}
                 </p>
                 <p className="text-lg text-gray-600 mt-2">
-                  employees checked in today
+                  {t("home.charts.attendance.checkedIn")}
                 </p>
               </div>
             </div>
           ) : (
             <div className="w-full h-[300px] flex items-center justify-center">
-              <p className="text-gray-500">No attendance data available</p>
+              <p className="text-gray-500">{t("home.charts.attendance.noData")}</p>
             </div>
           )}
         </CardContent>
@@ -209,8 +206,8 @@ export function HomeChart() {
 
       <Card className="w-full border border-gray-400">
         <CardHeader>
-          <CardTitle className="text-primary-md">Salary Distribution</CardTitle>
-          <CardDescription>Distribution of salaries across the company</CardDescription>
+          <CardTitle className="text-primary-md">{t("home.charts.salary.title")}</CardTitle>
+          <CardDescription>{t("home.charts.salary.desc")}</CardDescription>
         </CardHeader>
         <CardContent>
           <ChartContainer
@@ -244,8 +241,8 @@ export function HomeChart() {
 
       <Card className="w-full border border-gray-400">
         <CardHeader>
-          <CardTitle className="text-primary-md">Performance Ratings</CardTitle>
-          <CardDescription>Distribution of employee performance ratings</CardDescription>
+          <CardTitle className="text-primary-md">{t("home.charts.performance.title")}</CardTitle>
+          <CardDescription>{t("home.charts.performance.desc")}</CardDescription>
         </CardHeader>
         <CardContent>
           <ChartContainer
@@ -262,19 +259,15 @@ export function HomeChart() {
                 innerRadius="30%"
                 outerRadius="70%"
                 data={[
-                  { name: 'Exceptional', value: 20 },
-                  { name: 'Exceeds Expectations', value: 35 },
-                  { name: 'Meets Expectations', value: 30 },
-                  { name: 'Needs Improvement', value: 15 },
+                  { name: "Exceptional", value: 20 },
+                  { name: "Exceeds Expectations", value: 35 },
+                  { name: "Meets Expectations", value: 30 },
+                  { name: "Needs Improvement", value: 15 },
                 ]}
                 startAngle={0}
                 endAngle={360}
               >
-                <RadialBar
-                  background
-                  dataKey="value"
-                  cornerRadius={15}
-                />
+                <RadialBar background dataKey="value" cornerRadius={15} />
                 <ChartTooltip content={<ChartTooltipContent />} />
               </RadialBarChart>
             </ResponsiveContainer>
@@ -282,6 +275,5 @@ export function HomeChart() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
-

@@ -2,48 +2,44 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Users, BarChart3, Lock, Clock, Zap, FileText } from "lucide-react";
+import { useI18n } from "@/app/providers/LanguageProvider";
 
 export default function FeaturesPage() {
+  const { t } = useI18n();
   const features = [
     {
-      title: "Comprehensive HR Management",
-      description:
-        "Manage employee profiles, personal information, certifications, and experience in a centralized and efficient manner.",
+      title: t("features.feature1.title"),
+      description: t("features.feature1.desc"),
       icon: Users,
       color: "from-blue-500 to-blue-600",
     },
     {
-      title: "Analytics and Reporting",
-      description:
-        "Generate detailed reports on HR metrics, analyze data with visual charts, and make informed business decisions.",
+      title: t("features.feature2.title"),
+      description: t("features.feature2.desc"),
       icon: BarChart3,
       color: "from-green-500 to-green-600",
     },
     {
-      title: "Data Security",
-      description:
-        "Protect employee information with end-to-end encryption and granular access control for maximum security.",
+      title: t("features.feature3.title"),
+      description: t("features.feature3.desc"),
       icon: Lock,
       color: "from-purple-500 to-purple-600",
     },
     {
-      title: "Real-time Management",
-      description:
-        "Track work hours, attendance, and payroll automatically and accurately in real-time.",
+      title: t("features.feature4.title"),
+      description: t("features.feature4.desc"),
       icon: Clock,
       color: "from-orange-500 to-orange-600",
     },
     {
-      title: "High Performance",
-      description:
-        "Our system is optimized for speed and performance, handling thousands of employees without slowdown.",
+      title: t("features.feature5.title"),
+      description: t("features.feature5.desc"),
       icon: Zap,
       color: "from-red-500 to-red-600",
     },
     {
-      title: "Document Management",
-      description:
-        "Store and manage all employee-related documents in a centralized system for easy access and organization.",
+      title: t("features.feature6.title"),
+      description: t("features.feature6.desc"),
       icon: FileText,
       color: "from-cyan-500 to-cyan-600",
     },
@@ -61,21 +57,21 @@ export default function FeaturesPage() {
           </div>
           <div className="hidden lg:flex lg:gap-x-12">
             <Link href="/features" className="text-sm font-semibold leading-6 text-blue-600">
-              Features
+              {t("nav.features")}
             </Link>
             <Link href="/pricing" className="text-sm font-semibold leading-6 text-gray-900">
-              Pricing
+              {t("nav.pricing")}
             </Link>
             <Link href="/about" className="text-sm font-semibold leading-6 text-gray-900">
-              About
+              {t("nav.about")}
             </Link>
             <Link href="/contact" className="text-sm font-semibold leading-6 text-gray-900">
-              Contact
+              {t("nav.contact")}
             </Link>
           </div>
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
             <Link href="/login" className="text-sm font-semibold leading-6 text-gray-900">
-              Log in
+              {t("nav.login")}
             </Link>
           </div>
         </nav>
@@ -86,20 +82,17 @@ export default function FeaturesPage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-              Powerful Features for HR
+              {t("features.title")}
             </h1>
-            <p className="mt-6 text-lg leading-8 text-gray-600">
-              Discover advanced features that help you manage human resources efficiently and
-              professionally.
-            </p>
+            <p className="mt-6 text-lg leading-8 text-gray-600">{t("features.subtitle")}</p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Link href="/pricing">
                 <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 text-lg">
-                  View Pricing
+                  {t("features.viewPricing")}
                 </Button>
               </Link>
               <Link href="/contact" className="text-sm font-semibold leading-6 text-gray-900">
-                Contact us <span aria-hidden="true">→</span>
+                {t("features.contactUs")} <span aria-hidden="true">→</span>
               </Link>
             </div>
           </div>
@@ -137,15 +130,13 @@ export default function FeaturesPage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-              Ready to Upgrade Your HR Management?
+              {t("features.cta.title")}
             </h2>
-            <p className="mt-6 text-lg leading-8 text-gray-600">
-              Start free today and experience the power of Cetus.
-            </p>
+            <p className="mt-6 text-lg leading-8 text-gray-600">{t("features.cta.subtitle")}</p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Link href="/register">
                 <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 text-lg">
-                  Get Started <ArrowRight className="ml-2 h-5 w-5" />
+                  {t("features.cta.button")} <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
             </div>

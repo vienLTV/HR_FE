@@ -24,6 +24,7 @@ import { api } from "@/app/utils/api";
 import { toast } from "@/hooks/use-toast";
 import { Spinner } from "@/app/components/Spinner";
 import { useRole } from "@/hooks/useRole";
+import { useI18n } from "@/app/providers/LanguageProvider";
 
 type LeaveStatus = "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED";
 
@@ -47,6 +48,7 @@ interface CreateLeaveRequest {
 }
 
 export default function LeavePage() {
+  const { t } = useI18n();
   const { role, isLoaded } = useRole();
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -111,7 +113,7 @@ export default function LeavePage() {
     if (new Date(fromDate) > new Date(toDate)) {
       toast({
         title: "Validation Error",
-        description: "From date cannot be after to date",
+        description: t("leave.error.invalidDates"),
         variant: "destructive",
       });
       return;
@@ -135,7 +137,7 @@ export default function LeavePage() {
 
       toast({
         title: "Success",
-        description: "Leave request submitted successfully",
+        description: t("leave.success.created"),
       });
 
       // Reset form
@@ -149,7 +151,7 @@ export default function LeavePage() {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message || "Failed to submit leave request",
+        description: error.message || t("leave.error.failed"),
         variant: "destructive",
       });
     } finally {
@@ -169,7 +171,8 @@ export default function LeavePage() {
 
       toast({
         title: "Success",
-        description: `Leave request ${newStatus.toLowerCase()} successfully`,
+        description:
+          newStatus === "APPROVED" ? t("leave.success.approved") : t("leave.success.rejected"),
       });
 
       // Refresh list
@@ -177,7 +180,7 @@ export default function LeavePage() {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message || "Failed to update status",
+        description: error.message || t("leave.error.failed"),
         variant: "destructive",
       });
     }
@@ -191,9 +194,16 @@ export default function LeavePage() {
       CANCELLED: "bg-gray-100 text-gray-800",
     };
 
+    const labels = {
+      PENDING: t("leave.status.pending"),
+      APPROVED: t("leave.status.approved"),
+      REJECTED: t("leave.status.rejected"),
+      CANCELLED: t("leave.status.cancelled"),
+    };
+
     return (
       <span className={`px-3 py-1 rounded-full text-xs font-semibold ${styles[status]}`}>
-        {status}
+        {labels[status]}
       </span>
     );
   };
@@ -229,19 +239,19 @@ export default function LeavePage() {
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
             <Calendar className="h-8 w-8" />
-            Leave Management
+            {t("leave.title")}
           </h1>
           <p className="text-gray-500 mt-1">
             {role && ["MANAGER", "ADMIN", "OWNER"].includes(role.toUpperCase())
-              ? "Manage team leave requests"
-              : "Submit and track your leave requests"}
+              ? t("leave.subtitle")
+              : t("leave.subtitle")}
           </p>
         </div>
 
         {/* Create Leave Button - Available for all roles */}
         <Button onClick={() => setCreateDialogOpen(true)} className="flex items-center gap-2">
           <Plus className="h-4 w-4" />
-          Request Leave
+          {t("leave.createButton")}
         </Button>
       </div>
 
@@ -265,7 +275,7 @@ export default function LeavePage() {
               <Spinner />
             </div>
           ) : leaveRequests.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">No leave requests found</div>
+            <div className="text-center py-8 text-gray-500">{t("leave.noRequests")}</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200 border border-gray-300">
@@ -273,30 +283,30 @@ export default function LeavePage() {
                   <tr>
                     {role && ["MANAGER", "ADMIN", "OWNER"].includes(role.toUpperCase()) && (
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
-                        Employee
+                        {t("leave.employee")}
                       </th>
                     )}
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
-                      From Date
+                      {t("leave.fromDate")}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
-                      To Date
+                      {t("leave.toDate")}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
                       Days
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
-                      Reason
+                      {t("leave.reason")}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
-                      Status
+                      {t("attendance.status")}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
-                      Submitted
+                      {t("leave.requestDate")}
                     </th>
                     {role && ["MANAGER", "ADMIN", "OWNER"].includes(role.toUpperCase()) && (
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
-                        Actions
+                        {t("leave.actions")}
                       </th>
                     )}
                   </tr>
@@ -345,7 +355,7 @@ export default function LeavePage() {
                                   className="text-green-600 focus:text-green-600"
                                 >
                                   <Check className="mr-2 h-4 w-4" />
-                                  Approve
+                                  {t("leave.approve")}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                   onClick={() =>
@@ -354,7 +364,7 @@ export default function LeavePage() {
                                   className="text-red-600 focus:text-red-600"
                                 >
                                   <X className="mr-2 h-4 w-4" />
-                                  Reject
+                                  {t("leave.reject")}
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
@@ -378,16 +388,14 @@ export default function LeavePage() {
       <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>Request Leave</DialogTitle>
-            <DialogDescription>
-              Submit a new leave request. Your manager will review and approve it.
-            </DialogDescription>
+            <DialogTitle>{t("leave.create.title")}</DialogTitle>
+            <DialogDescription>{t("leave.create.description")}</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <label htmlFor="fromDate" className="text-sm font-medium">
-                From Date *
+                {t("leave.fromDate")} *
               </label>
               <Input
                 id="fromDate"
@@ -401,7 +409,7 @@ export default function LeavePage() {
 
             <div className="space-y-2">
               <label htmlFor="toDate" className="text-sm font-medium">
-                To Date *
+                {t("leave.toDate")} *
               </label>
               <Input
                 id="toDate"
@@ -415,7 +423,7 @@ export default function LeavePage() {
 
             <div className="space-y-2">
               <label htmlFor="reason" className="text-sm font-medium">
-                Reason *
+                {t("leave.reason")} *
               </label>
               <Textarea
                 id="reason"
@@ -440,16 +448,16 @@ export default function LeavePage() {
               onClick={() => setCreateDialogOpen(false)}
               disabled={isSubmitting}
             >
-              Cancel
+              {t("leave.cancel")}
             </Button>
             <Button onClick={handleCreateLeave} disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
                   <Spinner />
-                  Submitting...
+                  {t("leave.submitting")}
                 </>
               ) : (
-                "Submit Request"
+                t("leave.submit")
               )}
             </Button>
           </DialogFooter>

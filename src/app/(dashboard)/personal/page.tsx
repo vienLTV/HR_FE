@@ -11,12 +11,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Spinner } from "@/app/components/Spinner";
 import AvatarUploadDialog from "@/app/components/AvatarUploadDialog";
 import BankAccountInfo from "@/app/components/BankAccountInfo";
+import { useI18n } from "@/app/providers/LanguageProvider";
 
 interface PersonalProps {
   params: { employeeId?: string };
 }
 
 const PersonalPage = ({ params }: PersonalProps) => {
+  const { t } = useI18n();
   const router = useRouter();
   const [employeeData, setEmployeeData] = useState<Employee | undefined>();
   const [isLoading, setIsLoading] = useState(true);
@@ -173,8 +175,8 @@ const PersonalPage = ({ params }: PersonalProps) => {
 
   return (
     <div className="container mx-auto p-2">
-      <h1 className="text-primary-heading mb-1">Personal</h1>
-      <p className="text-muted-foreground mb-3">All of Employee Personal Information</p>
+      <h1 className="text-primary-heading mb-1">{t("personal.title")}</h1>
+      <p className="text-muted-foreground mb-3">{t("personal.subtitle")}</p>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="col-span-2">
@@ -185,49 +187,55 @@ const PersonalPage = ({ params }: PersonalProps) => {
                   className="border border-gray-300 data-[state=active]:text-[#054FA5]"
                   value="personal"
                 >
-                  <span className="text-md font-bold">Personal</span>
+                  <span className="text-md font-bold">{t("personal.tabs.personal")}</span>
                 </TabsTrigger>
                 <TabsTrigger
                   className="border border-gray-300 data-[state=active]:text-[#054FA5]"
                   value="history"
                 >
-                  <span className="text-md font-bold">Employee History</span>
+                  <span className="text-md font-bold">{t("personal.tabs.history")}</span>
                 </TabsTrigger>
                 <TabsTrigger
                   className="border border-gray-300 data-[state=active]:text-[#054FA5]"
                   value="emergency"
                 >
-                  <span className="text-md font-bold">Emergency Contact</span>
+                  <span className="text-md font-bold">{t("personal.tabs.emergency")}</span>
                 </TabsTrigger>
                 <TabsTrigger
                   className="border border-gray-300 data-[state=active]:text-[#054FA5]"
                   value="bank"
                 >
-                  <span className="text-md font-bold">Bank Account</span>
+                  <span className="text-md font-bold">{t("personal.tabs.bank")}</span>
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="personal">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                   <Card className="border border-gray-300">
                     <CardHeader>
-                      <CardTitle className="text-primary-md">Company Information</CardTitle>
+                      <CardTitle className="text-primary-md">
+                        {t("personal.section.company")}
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <dl className="space-y-2">
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Company email</dt>
+                          <dt className="text-sm font-medium text-gray-500">
+                            {t("personal.field.companyEmail")}
+                          </dt>
                           <dd className="mt-1 text-md font-medium">{employeeData.companyEmail}</dd>
                         </div>
                         <div>
                           <dt className="text-sm font-medium text-gray-500">
-                            Company phone number
+                            {t("personal.field.companyPhone")}
                           </dt>
                           <dd className="mt-1 text-md font-medium">
                             {employeeData.companyPhoneNumber}
                           </dd>
                         </div>
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Employee status</dt>
+                          <dt className="text-sm font-medium text-gray-500">
+                            {t("personal.field.employeeStatus")}
+                          </dt>
                           <dd
                             className={`p-2 mt-2 inline-flex text-xs leading-5 ${
                               employeeData.employeeStatus === "OFFICIAL"
@@ -237,23 +245,33 @@ const PersonalPage = ({ params }: PersonalProps) => {
                                 : "bg-gray-100 text-gray-800"
                             }`}
                           >
-                            {employeeData.employeeStatus}
+                            {employeeData.employeeStatus === "OFFICIAL"
+                              ? t("employee.status.official")
+                              : employeeData.employeeStatus === "PROBATION"
+                              ? t("employee.status.probation")
+                              : employeeData.employeeStatus}
                           </dd>
                         </div>
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Job Title</dt>
+                          <dt className="text-sm font-medium text-gray-500">
+                            {t("personal.field.jobTitle")}
+                          </dt>
                           <dd className="mt-1 text-md font-medium">
                             {employeeData.jobTitle?.title || "N/A"}
                           </dd>
                         </div>
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Team</dt>
+                          <dt className="text-sm font-medium text-gray-500">
+                            {t("personal.field.team")}
+                          </dt>
                           <dd className="mt-1 text-md font-medium">
                             {employeeData.team?.name || "N/A"}
                           </dd>
                         </div>
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Department</dt>
+                          <dt className="text-sm font-medium text-gray-500">
+                            {t("personal.field.department")}
+                          </dt>
                           <dd className="mt-1 text-md font-medium">
                             {employeeData.department?.name || "N/A"}
                           </dd>
@@ -263,58 +281,78 @@ const PersonalPage = ({ params }: PersonalProps) => {
                   </Card>
                   <Card className="border border-gray-300">
                     <CardHeader>
-                      <CardTitle className="text-primary-md">Personal Detail</CardTitle>
+                      <CardTitle className="text-primary-md">
+                        {t("personal.section.detail")}
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <dl className="space-y-2">
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Gender</dt>
+                          <dt className="text-sm font-medium text-gray-500">
+                            {t("personal.field.gender")}
+                          </dt>
                           <dd className="mt-1 text-md font-medium">
                             {employeeData.gender == "MALE"
-                              ? "Male"
+                              ? t("personal.gender.male")
                               : employeeData.gender == "FEMALE"
-                              ? "Female"
-                              : "Other"}
+                              ? t("personal.gender.female")
+                              : t("personal.gender.other")}
                           </dd>
                         </div>
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">First Name</dt>
+                          <dt className="text-sm font-medium text-gray-500">
+                            {t("personal.field.firstName")}
+                          </dt>
                           <dd className="mt-1 text-md font-medium">{employeeData.firstName}</dd>
                         </div>
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Last Name</dt>
+                          <dt className="text-sm font-medium text-gray-500">
+                            {t("personal.field.lastName")}
+                          </dt>
                           <dd className="mt-1 text-md font-medium">{employeeData.lastName}</dd>
                         </div>
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Personal Email</dt>
+                          <dt className="text-sm font-medium text-gray-500">
+                            {t("personal.field.personalEmail")}
+                          </dt>
                           <dd className="mt-1 text-md font-medium">{employeeData.personalEmail}</dd>
                         </div>
                         <div>
                           <dt className="text-sm font-medium text-gray-500">
-                            Personal Phone Number
+                            {t("personal.field.personalPhone")}
                           </dt>
                           <dd className="mt-1 text-md font-medium">
                             {employeeData.personalPhoneNumber}
                           </dd>
                         </div>
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Current Address</dt>
+                          <dt className="text-sm font-medium text-gray-500">
+                            {t("personal.field.currentAddress")}
+                          </dt>
                           <dd className="mt-1 text-md font-medium">
                             {employeeData.currentAddress}
                           </dd>
                         </div>
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Date of Birth</dt>
+                          <dt className="text-sm font-medium text-gray-500">
+                            {t("personal.field.dateOfBirth")}
+                          </dt>
                           <dd className="mt-1 text-md font-medium">{employeeData.dateOfBirth}</dd>
                         </div>
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Place of Birth</dt>
+                          <dt className="text-sm font-medium text-gray-500">
+                            {t("personal.field.birthPlace")}
+                          </dt>
                           <dd className="mt-1 text-md font-medium">{employeeData.birthPlace}</dd>
                         </div>
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Marital Status</dt>
+                          <dt className="text-sm font-medium text-gray-500">
+                            {t("personal.field.maritalStatus")}
+                          </dt>
                           <dd className="mt-1 text-md font-medium">
-                            {employeeData.maritalStatus == "MARRIED" ? "Married" : "Not married"}
+                            {employeeData.maritalStatus == "MARRIED"
+                              ? t("personal.maritalStatus.married")
+                              : t("personal.maritalStatus.notMarried")}
                           </dd>
                         </div>
                       </dl>
@@ -342,34 +380,34 @@ const PersonalPage = ({ params }: PersonalProps) => {
               <TabsContent value="history">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Employee History</CardTitle>
+                    <CardTitle>{t("personal.history.title")}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     {historyLoading ? (
-                      <p className="text-sm text-gray-600">Loading employee history...</p>
+                      <p className="text-sm text-gray-600">{t("personal.history.loading")}</p>
                     ) : historyError ? (
                       <p className="text-sm text-red-600">{historyError}</p>
                     ) : history.length === 0 ? (
-                      <p className="text-sm text-gray-600">No history recorded yet.</p>
+                      <p className="text-sm text-gray-600">{t("personal.history.empty")}</p>
                     ) : (
                       <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-gray-200 border">
                           <thead className="bg-gray-50">
                             <tr>
                               <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Date
+                                {t("personal.history.date")}
                               </th>
                               <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Changed By
+                                {t("personal.history.changedBy")}
                               </th>
                               <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Field
+                                {t("personal.history.field")}
                               </th>
                               <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Old → New
+                                {t("personal.history.oldNew")}
                               </th>
                               <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Type
+                                {t("personal.history.type")}
                               </th>
                             </tr>
                           </thead>
@@ -408,10 +446,10 @@ const PersonalPage = ({ params }: PersonalProps) => {
               <TabsContent className="border border-gray-600" value="emergency">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Emergency Contact</CardTitle>
+                    <CardTitle>{t("personal.emergency.title")}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p>Emergency contact information will be displayed here.</p>
+                    <p>{t("personal.emergency.desc")}</p>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -423,7 +461,7 @@ const PersonalPage = ({ params }: PersonalProps) => {
         </Card>
         <Card className="border rounded-none border-gray-400">
           <CardHeader>
-            <CardTitle className="text-primary-md">Profile Summary</CardTitle>
+            <CardTitle className="text-primary-md">{t("personal.profileSummary")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-center">
@@ -451,10 +489,11 @@ const PersonalPage = ({ params }: PersonalProps) => {
             </div>
             <div className="mt-6 space-y-2">
               <p>
-                <strong>Team:</strong> {employeeData.team?.name || "N/A"}
+                <strong>{t("personal.profileSummary.team")}:</strong>{" "}
+                {employeeData.team?.name || "N/A"}
               </p>
               <p>
-                <strong>Status: </strong>
+                <strong>{t("personal.profileSummary.status")}: </strong>
                 <span
                   className={`p-2 inline-flex text-xs leading-5 ${
                     employeeData.employeeStatus === "OFFICIAL"
@@ -464,14 +503,19 @@ const PersonalPage = ({ params }: PersonalProps) => {
                       : "bg-gray-100 text-gray-800"
                   }`}
                 >
-                  {employeeData.employeeStatus}
+                  {employeeData.employeeStatus === "OFFICIAL"
+                    ? t("employee.status.official")
+                    : employeeData.employeeStatus === "PROBATION"
+                    ? t("employee.status.probation")
+                    : employeeData.employeeStatus}
                 </span>
               </p>
               <p>
-                <strong>Email:</strong> {employeeData.companyEmail}
+                <strong>{t("personal.profileSummary.email")}:</strong> {employeeData.companyEmail}
               </p>
               <p>
-                <strong>Phone:</strong> {employeeData.companyPhoneNumber}
+                <strong>{t("personal.profileSummary.phone")}:</strong>{" "}
+                {employeeData.companyPhoneNumber}
               </p>
             </div>
           </CardContent>
