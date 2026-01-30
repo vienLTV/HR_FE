@@ -62,8 +62,40 @@ export default function TeamPage() {
   const { toast } = useToast();
 
   useEffect(() => {
-    fetchTeams();
-    fetchDepartments();
+    const fetchInitialData = async () => {
+      try {
+        setIsLoading(true);
+        const [teamsResponse, departmentsResponse] = await Promise.all([
+          api.get("/teams/"),
+          api.get("/departments/"),
+        ]);
+
+        if (teamsResponse.ok) {
+          const teamsData = await teamsResponse.json();
+          setTeams(teamsData.data || []);
+        } else {
+          throw new Error(t("team.error"));
+        }
+
+        if (departmentsResponse.ok) {
+          const departmentsData = await departmentsResponse.json();
+          setDepartments(departmentsData.data || []);
+        }
+
+        setError(null);
+      } catch (err) {
+        setError(t("team.error"));
+        toast({
+          title: "Error",
+          description: t("team.error"),
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchInitialData();
   }, []);
 
   const fetchTeams = async () => {
@@ -127,7 +159,7 @@ export default function TeamPage() {
       toast({
         title: "Success",
         description: `${t("team.success.deleted")} "${teamToDelete.name}" ${t(
-          "team.success.deleted.suffix"
+          "team.success.deleted.suffix",
         )}`,
       });
     } catch (err) {
@@ -149,7 +181,7 @@ export default function TeamPage() {
         toast({
           title: "Success",
           description: `${t("team.success.updated")} "${team.name}" ${t(
-            "team.success.updated.suffix"
+            "team.success.updated.suffix",
           )}`,
         });
       } else {
@@ -159,7 +191,7 @@ export default function TeamPage() {
         toast({
           title: "Success",
           description: `${t("team.success.created")} ${team.name} ${t(
-            "team.success.created.suffix"
+            "team.success.created.suffix",
           )}`,
         });
       }

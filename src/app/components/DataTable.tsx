@@ -104,28 +104,43 @@ export function DataTable() {
         throw new Error();
       }
       const data = await response.json();
+      const items: Employee[] = data?.data?.items || [];
 
-      // Fetch role info for each employee if they have a companyEmail
-      const employeesWithRoles = await Promise.all(
-        data.data.items.map(async (employee: Employee) => {
-          if (employee.companyEmail) {
+      // Show base data first for faster render
+      setEmployees(items);
+
+      // Fetch role info only for employees that already have accounts (userId)
+      const employeesNeedingRoles = items.filter(
+        (employee) => employee.userId && employee.companyEmail,
+      );
+
+      if (employeesNeedingRoles.length > 0) {
+        const roleResults = await Promise.all(
+          employeesNeedingRoles.map(async (employee) => {
             try {
               const roleResponse = await api.get(
                 `/auth/users/${encodeURIComponent(employee.companyEmail)}`,
               );
               if (roleResponse.ok) {
                 const roleData = await roleResponse.json();
-                return { ...employee, role: roleData.data?.role };
+                return { email: employee.companyEmail, role: roleData.data?.role };
               }
             } catch (err) {
               console.log(`Failed to fetch role for employee ${employee.employeeId}`);
             }
-          }
-          return employee;
-        }),
-      );
+            return { email: employee.companyEmail, role: undefined };
+          }),
+        );
 
-      setEmployees(employeesWithRoles);
+        const roleByEmail = new Map(roleResults.map((r) => [r.email, r.role]));
+
+        setEmployees((prev) =>
+          prev.map((employee) => ({
+            ...employee,
+            role: roleByEmail.get(employee.companyEmail) ?? employee.role,
+          })),
+        );
+      }
     } catch (error) {
       setError(error instanceof Error ? error.message : "An unknown error occurred");
     } finally {
@@ -143,9 +158,7 @@ export function DataTable() {
       }
       const data = await response.json();
       const organization = data.data;
-      console.log("Organization data:", organization);
       const ownerEmailValue = organization.owner || null;
-      console.log("Owner email:", ownerEmailValue);
       setOwnerEmail(ownerEmailValue);
     } catch (error) {
       console.error("Error fetching organization:", error);
@@ -160,7 +173,6 @@ export function DataTable() {
     if (!mounted || !isLoaded) return;
     const storedEmployeeId =
       typeof window !== "undefined" ? localStorage.getItem("employeeId") : null;
-    console.log("Current employeeId from localStorage:", storedEmployeeId);
     setCurrentEmployeeId(storedEmployeeId);
     fetchEmployeesData();
     fetchOrganizationData();
@@ -279,9 +291,6 @@ export function DataTable() {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {employees.map((employee) => {
-              console.log(
-                `Employee: ${employee.firstName} ${employee.lastName}, userId: ${employee.userId}`,
-              );
               const isOwnerEmail =
                 ownerEmail &&
                 (ownerEmail.toLowerCase() === employee.companyEmail?.toLowerCase() ||

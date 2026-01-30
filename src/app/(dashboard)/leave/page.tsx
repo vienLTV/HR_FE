@@ -76,11 +76,8 @@ export default function LeavePage() {
       }
 
       const result = await response.json();
-      console.log("Backend response:", result);
-
       // Backend returns {success, code, message, data}
       const leaveData = result.data || [];
-      console.log("Leave data:", leaveData);
       setLeaveRequests(Array.isArray(leaveData) ? leaveData : []);
     } catch (error) {
       console.error("Error fetching leave requests:", error);

@@ -32,35 +32,18 @@ export default function AttendancePage() {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
-  const fetchTodayAttendance = async () => {
-    try {
-      // Get today's attendance records (get multiple in case of re-check-in)
-      const response = await api.get("/attendance/my-attendance?page=0&size=10");
-      if (response.ok) {
-        const result = await response.json();
-        const items = result.data.items || [];
-        const today = new Date().toISOString().split("T")[0];
-
-        // Find the latest record for today
-        const todayRecords = items.filter((record: AttendanceRecord) => {
-          try {
-            const recordDate = new Date(record.attendanceDate).toISOString().split("T")[0];
-            return recordDate === today;
-          } catch {
-            return false;
-          }
-        });
-
-        if (todayRecords.length > 0) {
-          // Get the most recent record (first one in the list, since it's sorted by date DESC)
-          setTodayAttendance(todayRecords[0]);
-          return;
-        }
-        setTodayAttendance(null);
+  const applyAttendanceItems = (items: AttendanceRecord[]) => {
+    const today = new Date().toISOString().split("T")[0];
+    const todayRecords = items.filter((record: AttendanceRecord) => {
+      try {
+        const recordDate = new Date(record.attendanceDate).toISOString().split("T")[0];
+        return recordDate === today;
+      } catch {
+        return false;
       }
-    } catch (error) {
-      console.error("Error fetching today's attendance:", error);
-    }
+    });
+    setTodayAttendance(todayRecords.length > 0 ? todayRecords[0] : null);
+    setAttendanceHistory(items);
   };
 
   const fetchAttendanceHistory = async (page: number = 0) => {
@@ -69,7 +52,8 @@ export default function AttendancePage() {
       const response = await api.get(`/attendance/my-attendance?page=${page}&size=10`);
       if (response.ok) {
         const result = await response.json();
-        setAttendanceHistory(result.data.items || []);
+        const items = result.data.items || [];
+        applyAttendanceItems(items);
         setTotalPages(result.data.totalPages || 0);
         setCurrentPage(page);
       }
@@ -86,7 +70,6 @@ export default function AttendancePage() {
   };
 
   useEffect(() => {
-    fetchTodayAttendance();
     fetchAttendanceHistory();
   }, []);
 
@@ -100,9 +83,6 @@ export default function AttendancePage() {
         const attendance = resJson?.data as AttendanceRecord | null;
         if (attendance) {
           setTodayAttendance(attendance);
-        } else {
-          // Fallback to fetching if payload missing
-          await fetchTodayAttendance();
         }
         toast({
           title: "Success",
@@ -136,8 +116,6 @@ export default function AttendancePage() {
         const attendance = resJson?.data as AttendanceRecord | null;
         if (attendance) {
           setTodayAttendance(attendance);
-        } else {
-          await fetchTodayAttendance();
         }
         toast({
           title: "Success",

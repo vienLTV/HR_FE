@@ -53,9 +53,17 @@ const PersonalPage = ({ params }: PersonalProps) => {
       // Fetch employee data using the effectiveEmployeeId
       const response = await api.get("/employees/" + effectiveEmployeeId);
       if (!response.ok) {
-        throw new Error("Failed to fetch employee data");
+        const errorData = await response.json().catch(() => null);
+        throw new Error(
+          `Failed to fetch employee data: ${response.status} - ${errorData?.message || response.statusText}`,
+        );
       }
       const data = await response.json();
+
+      if (!data.data) {
+        throw new Error("No employee data in response");
+      }
+
       setEmployeeData(data.data);
 
       // reset history state when employee changes
@@ -63,24 +71,35 @@ const PersonalPage = ({ params }: PersonalProps) => {
       setHistoryError(null);
       setHistoryLoaded(false);
 
-      await fetchAvatarImage(effectiveEmployeeId);
+      // Render main content first, then load avatar in background
+      setIsLoading(false);
+      fetchAvatarImage(effectiveEmployeeId);
     } catch (error) {
       console.error("Error fetching employee data:", error);
+      setIsLoading(false);
       // Handle error state here, e.g., set an error message state
     } finally {
-      setIsLoading(false);
+      // do not block UI on avatar fetch
     }
   };
 
   const fetchAvatarImage = async (activeEmployeeId: string) => {
     try {
-      console.log("employeeId to fecth avatar: " + activeEmployeeId);
+      const cacheKey = `avatar:${activeEmployeeId}`;
+      const cached = typeof window !== "undefined" ? sessionStorage.getItem(cacheKey) : null;
+      if (cached) {
+        setAvatarUrl(cached);
+        return;
+      }
 
       const response = await api.get(`/employees/profile/${activeEmployeeId}`);
       if (response.ok) {
         const data = await response.json();
         const imageUrl = `data:${data.data.avatarContentType};base64,${data.data.avatarImage}`;
         setAvatarUrl(imageUrl);
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem(cacheKey, imageUrl);
+        }
       } else {
         console.error("Failed to fetch avatar image");
       }
@@ -111,7 +130,7 @@ const PersonalPage = ({ params }: PersonalProps) => {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       if (response.status === 401) {
@@ -241,15 +260,15 @@ const PersonalPage = ({ params }: PersonalProps) => {
                               employeeData.employeeStatus === "OFFICIAL"
                                 ? "label-primary"
                                 : employeeData.employeeStatus === "PROBATION"
-                                ? "label-warning"
-                                : "bg-gray-100 text-gray-800"
+                                  ? "label-warning"
+                                  : "bg-gray-100 text-gray-800"
                             }`}
                           >
                             {employeeData.employeeStatus === "OFFICIAL"
                               ? t("employee.status.official")
                               : employeeData.employeeStatus === "PROBATION"
-                              ? t("employee.status.probation")
-                              : employeeData.employeeStatus}
+                                ? t("employee.status.probation")
+                                : employeeData.employeeStatus}
                           </dd>
                         </div>
                         <div>
@@ -295,8 +314,8 @@ const PersonalPage = ({ params }: PersonalProps) => {
                             {employeeData.gender == "MALE"
                               ? t("personal.gender.male")
                               : employeeData.gender == "FEMALE"
-                              ? t("personal.gender.female")
-                              : t("personal.gender.other")}
+                                ? t("personal.gender.female")
+                                : t("personal.gender.other")}
                           </dd>
                         </div>
                         <div>
@@ -499,15 +518,15 @@ const PersonalPage = ({ params }: PersonalProps) => {
                     employeeData.employeeStatus === "OFFICIAL"
                       ? "label-primary"
                       : employeeData.employeeStatus === "PROBATION"
-                      ? "label-warning"
-                      : "bg-gray-100 text-gray-800"
+                        ? "label-warning"
+                        : "bg-gray-100 text-gray-800"
                   }`}
                 >
                   {employeeData.employeeStatus === "OFFICIAL"
                     ? t("employee.status.official")
                     : employeeData.employeeStatus === "PROBATION"
-                    ? t("employee.status.probation")
-                    : employeeData.employeeStatus}
+                      ? t("employee.status.probation")
+                      : employeeData.employeeStatus}
                 </span>
               </p>
               <p>
