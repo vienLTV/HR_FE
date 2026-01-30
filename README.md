@@ -611,7 +611,7 @@ POST / salary;
 #### Bước 1: Clone Repository
 
 ```bash
-git clone <https://github.com/vienLTV/HR_FE.git>
+git clone https://github.com/vienLTV/HR_FE.git
 cd cetus-ui-master
 ```
 

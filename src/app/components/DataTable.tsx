@@ -45,6 +45,7 @@ export type Employee = {
   birthPlace: string;
   maritalStatus: string;
   userId?: string;
+  role?: string;
 };
 
 export type JobTitle = {
@@ -103,7 +104,28 @@ export function DataTable() {
         throw new Error();
       }
       const data = await response.json();
-      setEmployees(data.data.items);
+
+      // Fetch role info for each employee if they have a companyEmail
+      const employeesWithRoles = await Promise.all(
+        data.data.items.map(async (employee: Employee) => {
+          if (employee.companyEmail) {
+            try {
+              const roleResponse = await api.get(
+                `/auth/users/${encodeURIComponent(employee.companyEmail)}`,
+              );
+              if (roleResponse.ok) {
+                const roleData = await roleResponse.json();
+                return { ...employee, role: roleData.data?.role };
+              }
+            } catch (err) {
+              console.log(`Failed to fetch role for employee ${employee.employeeId}`);
+            }
+          }
+          return employee;
+        }),
+      );
+
+      setEmployees(employeesWithRoles);
     } catch (error) {
       setError(error instanceof Error ? error.message : "An unknown error occurred");
     } finally {
@@ -245,6 +267,9 @@ export function DataTable() {
                 {t("employee.table.department")}
               </th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Role
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                 {t("employee.table.status")}
               </th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -255,8 +280,12 @@ export function DataTable() {
           <tbody className="bg-white divide-y divide-gray-200">
             {employees.map((employee) => {
               console.log(
-                `Employee: ${employee.firstName} ${employee.lastName}, userId: ${employee.userId}`
+                `Employee: ${employee.firstName} ${employee.lastName}, userId: ${employee.userId}`,
               );
+              const isOwnerEmail =
+                ownerEmail &&
+                (ownerEmail.toLowerCase() === employee.companyEmail?.toLowerCase() ||
+                  ownerEmail.toLowerCase() === employee.personalEmail?.toLowerCase());
               return (
                 <tr
                   key={employee.employeeId}
@@ -269,20 +298,25 @@ export function DataTable() {
                   <td className="px-6 py-4 whitespace-nowrap">{employee.team?.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{employee.department?.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="p-2 inline-flex text-xs leading-5 font-medium">
+                      {isOwnerEmail ? "OWNER" : employee.role || "-"}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <span
                       className={`p-2 inline-flex text-xs leading-5 ${
                         employee.employeeStatus === "OFFICIAL"
                           ? "label-primary"
                           : employee.employeeStatus === "PROBATION"
-                          ? "label-warning"
-                          : "bg-gray-100 text-gray-800"
+                            ? "label-warning"
+                            : "bg-gray-100 text-gray-800"
                       }`}
                     >
                       {employee.employeeStatus === "OFFICIAL"
                         ? t("employee.status.official")
                         : employee.employeeStatus === "PROBATION"
-                        ? t("employee.status.probation")
-                        : employee.employeeStatus}
+                          ? t("employee.status.probation")
+                          : employee.employeeStatus}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
