@@ -98,7 +98,7 @@ export default function DepartmentPage() {
       toast({
         title: "Success",
         description: `${t("department.success.deleted")} "${departmentToDelete.name}" ${t(
-          "department.success.deleted.suffix"
+          "department.success.deleted.suffix",
         )}`,
       });
     } catch (err) {
@@ -117,12 +117,12 @@ export default function DepartmentPage() {
       if (currentDepartment) {
         await api.put(`/departments/${department.departmentId}`, department);
         setDepartments(
-          departments.map((d) => (d.departmentId === department.departmentId ? department : d))
+          departments.map((d) => (d.departmentId === department.departmentId ? department : d)),
         );
         toast({
           title: "Success",
           description: `${t("department.success.updated")} "${department.name}" ${t(
-            "department.success.updated.suffix"
+            "department.success.updated.suffix",
           )}`,
         });
       } else {
@@ -132,7 +132,7 @@ export default function DepartmentPage() {
         toast({
           title: "Success",
           description: `${t("department.success.created")} "${department.name}" ${t(
-            "department.success.created.suffix"
+            "department.success.created.suffix",
           )}`,
         });
       }
@@ -275,11 +275,11 @@ function DepartmentForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <Label htmlFor="name">{t("department.form.name")}</Label>
+        <Label htmlFor="name">{t("department.dialog.label.name")}</Label>
         <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required />
       </div>
       <div>
-        <Label htmlFor="description">{t("department.form.description")}</Label>
+        <Label htmlFor="description">{t("department.dialog.label.description")}</Label>
         <Textarea
           id="description"
           value={description}
@@ -288,7 +288,7 @@ function DepartmentForm({
         />
       </div>
       <div>
-        <Label htmlFor="location">{t("department.form.location")}</Label>
+        <Label htmlFor="location">{t("department.dialog.label.location")}</Label>
         <Input
           id="location"
           value={location}
@@ -297,7 +297,7 @@ function DepartmentForm({
         />
       </div>
       <div>
-        <Label htmlFor="establishedDate">{t("department.form.establishedDate")}</Label>
+        <Label htmlFor="establishedDate">{t("department.dialog.label.establishedDate")}</Label>
         <Input
           id="establishedDate"
           type="date"
@@ -307,7 +307,7 @@ function DepartmentForm({
         />
       </div>
       <div>
-        <Label htmlFor="phoneNumber">{t("department.form.phoneNumber")}</Label>
+        <Label htmlFor="phoneNumber">{t("department.dialog.label.phoneNumber")}</Label>
         <Input
           id="phoneNumber"
           value={phoneNumber}
@@ -316,7 +316,7 @@ function DepartmentForm({
         />
       </div>
       <div>
-        <Label htmlFor="email">{t("department.form.email")}</Label>
+        <Label htmlFor="email">{t("department.dialog.label.email")}</Label>
         <Input
           id="email"
           type="email"
